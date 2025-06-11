@@ -4,61 +4,182 @@
   font-family: "Poppins", sans-serif;
 }
 
+/* Fix the main container */
 .cashier-dashboard {
   height: 100vh;
+  overflow: hidden;
   padding: 0;
-  background-color: #faf9f6;
-  font-family: "Poppins", sans-serif;
+  margin: 0;
+  max-width: 100%;
 }
 
+.cashier-dashboard .row {
+  height: 100vh;
+  margin: 0;
+  overflow: hidden;
+  max-width: 100%;
+}
+
+/* Modern Sidebar Design - Fixed widths */
 .sidebar {
-  background-color: #ff9500;
+  background: linear-gradient(180deg, #ff9500 0%, #ff7b00 50%, #ff6b00 100%);
   color: white;
   padding: 0;
-  border-right: 3px solid #ff9500;
-  box-shadow: 2px 0 10px rgba(255, 149, 0, 0.1);
+  box-shadow: 4px 0 25px rgba(255, 149, 0, 0.15);
   position: fixed;
   top: 0;
   left: 0;
   height: 100vh;
-  width: 25%;
+  width: 220px; /* Slightly smaller normal width */
   z-index: 1000;
   overflow-y: auto;
+  overflow-x: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-right: 3px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar.collapsed {
+  width: 80px; /* Better collapsed width - not too narrow */
+}
+
+/* Header styles */
+.sidebar-header {
+  margin-bottom: 20px;
+}
+
+.sidebar-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 20px;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .sidebar-content {
-  padding: 25px 20px;
+  padding: 20px 15px;
   height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
 }
 
+/* Hamburger Menu Button */
+.sidebar-toggle {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: 2px solid rgba(255, 255, 255, 0.2) !important;
+  padding: 12px !important;
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  margin-bottom: 0;
+  align-self: center;
+  flex-shrink: 0;
+}
+
+.sidebar-toggle:hover {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  transform: scale(1.05);
+}
+
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  width: 22px;
+  height: 18px;
+  position: relative;
+  cursor: pointer;
+}
+
+.hamburger span {
+  display: block;
+  position: absolute;
+  height: 3px;
+  width: 100%;
+  background: white;
+  border-radius: 2px;
+  opacity: 1;
+  left: 0;
+  transform: rotate(0deg);
+  transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.hamburger span:nth-child(1) {
+  top: 0px;
+}
+
+.hamburger span:nth-child(2) {
+  top: 7px;
+}
+
+.hamburger span:nth-child(3) {
+  top: 14px;
+}
+
+.hamburger.collapsed span:nth-child(1) {
+  top: 7px;
+  transform: rotate(135deg);
+}
+
+.hamburger.collapsed span:nth-child(2) {
+  opacity: 0;
+  left: -60px;
+}
+
+.hamburger.collapsed span:nth-child(3) {
+  top: 7px;
+  transform: rotate(-135deg);
+}
+
+/* Modern Title */
 .sidebar-title {
   color: white;
-  margin-bottom: 35px;
-  font-size: 20px;
-  font-weight: 700;
-  text-align: center;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
-  padding-bottom: 20px;
+  margin-bottom: 0;
+  font-size: 18px;
+  font-weight: 800;
   font-family: "Poppins", sans-serif;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  line-height: 1.2;
+  letter-spacing: 0.5px;
+  background: linear-gradient(45deg, #ffffff, #f8f9fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+/* Modern Navigation */
 .sidebar-nav {
   gap: 8px;
+  flex: 1;
+  margin-top: 0;
 }
 
 .sidebar-link {
-  color: rgba(255, 255, 255, 0.8) !important;
-  padding: 18px 22px;
-  margin-bottom: 8px;
-  border-radius: 12px;
-  transition: all 0.3s ease;
+  color: rgba(255, 255, 255, 0.9) !important;
+  padding: 14px 12px; /* Slightly reduced padding */
+  margin-bottom: 6px; /* Reduced margin */
+  border-radius: 10px; /* Slightly smaller radius */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
   border: 2px solid transparent;
   font-family: "Poppins", sans-serif;
+  font-size: 12px; /* Slightly smaller font */
   position: relative;
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Reduced gap */
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.05);
+  white-space: nowrap;
 }
 
 .sidebar-link::before {
@@ -71,10 +192,10 @@
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0.15),
     transparent
   );
-  transition: left 0.5s;
+  transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .sidebar-link:hover::before {
@@ -82,90 +203,298 @@
 }
 
 .sidebar-link:hover {
-  background-color: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.15);
   color: white !important;
-  transform: translateX(8px);
+  transform: translateX(6px) scale(1.02); /* Reduced transform */
   border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15); /* Reduced shadow */
+}
+
+.sidebar.collapsed .sidebar-link:hover {
+  transform: translateX(3px) scale(1.03); /* Subtle transform for collapsed */
 }
 
 .sidebar-link.active {
-  background-color: white;
-  color: #ff9500 !important;
-  border-color: white;
-  font-weight: 600;
-  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  color: #ff6b00 !important;
+  border-color: rgba(255, 255, 255, 0.3);
+  font-weight: 700;
+  box-shadow: 0 6px 20px rgba(255, 255, 255, 0.25),
+    inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  transform: translateX(3px); /* Reduced transform */
 }
 
+.sidebar-link.active .sidebar-icon {
+  color: #ff6b00;
+  transform: scale(1.1);
+}
+
+/* Modern Icons */
+.sidebar-icon {
+  font-size: 16px; /* Slightly smaller */
+  min-width: 20px; /* Reduced min-width */
+  text-align: center;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+}
+
+.sidebar-text {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: all 0.3s ease;
+}
+
+.collapsed-nav .sidebar-link {
+  justify-content: center;
+  padding: 12px 8px; /* Better padding for collapsed state */
+}
+
+.collapsed-nav .sidebar-text {
+  display: none;
+}
+
+.collapsed-nav .sidebar-icon {
+  font-size: 18px; /* Larger icons when collapsed */
+}
+
+/* For collapsed state, center the hamburger */
+.sidebar.collapsed .sidebar-header-content {
+  justify-content: center;
+  border-bottom: none;
+  padding-bottom: 10px;
+}
+
+.sidebar.collapsed .sidebar-toggle {
+  margin: 0 auto;
+}
+
+/* Modern Main Content - Fixed positioning with calc */
 .main-content {
-  margin-left: 25%;
   padding: 25px;
   background-color: #faf9f6;
   overflow-y: auto;
+  overflow-x: hidden;
   min-height: 100vh;
+  max-height: 100vh;
+  margin-left: 220px; /* Match sidebar width */
+  width: calc(100% - 220px); /* Calculate remaining width */
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 0 0 0 25px;
+  box-shadow: -4px 0 25px rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
 }
 
-.content-section {
-  background-color: #ffffff;
-  border-radius: 15px;
-  padding: 30px;
-  box-shadow: 0 8px 25px rgba(255, 149, 0, 0.08);
-  border: 1px solid rgba(255, 149, 0, 0.1);
+.main-content.expanded {
+  margin-left: 80px; /* Match collapsed sidebar width */
+  width: calc(100% - 80px); /* Calculate remaining width */
 }
 
+/* Enhanced scrollbar for sidebar */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Content header improvements */
 .content-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f1f3f4;
   flex-wrap: wrap;
   gap: 15px;
 }
 
 .content-title {
   color: #ff9500;
-  margin-bottom: 0;
-  font-weight: 700;
-  font-size: 28px;
   font-family: "Poppins", sans-serif;
-  position: relative;
-}
-
-.content-title::after {
-  content: "";
-  position: absolute;
-  bottom: -8px;
-  left: 0;
-  width: 60px;
-  height: 4px;
-  background-color: #ff9500;
-  border-radius: 2px;
+  font-weight: 700;
+  margin-bottom: 0; /* Remove default margin */
+  font-size: 28px;
+  flex-shrink: 0;
 }
 
 .page-info {
   display: flex;
   align-items: center;
   gap: 15px;
+  flex-wrap: wrap;
+  margin: 0; /* Remove any default margins */
+  padding: 0; /* Remove any default padding */
 }
 
 .page-indicator {
-  background-color: #ff9500;
-  color: white;
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 13px;
+  color: #6c757d;
+  font-size: 14px;
+  font-weight: 500;
+  font-family: "Poppins", sans-serif;
+  white-space: nowrap;
+  margin: 0; /* Ensure no margin */
+  padding: 0; /* Ensure no padding */
+}
+
+.refresh-btn {
+  border-color: #ff9500 !important;
+  color: #ff9500 !important;
   font-weight: 600;
+  padding: 8px 16px; /* Consistent padding */
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  font-family: "Poppins", sans-serif;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0; /* Remove any margin */
+  flex-shrink: 0;
+}
+
+.refresh-btn:hover {
+  background-color: #ff9500 !important;
+  border-color: #ff9500 !important;
+  color: white !important;
+  transform: translateY(-1px);
   box-shadow: 0 2px 8px rgba(255, 149, 0, 0.2);
 }
 
-.table-container {
-  background-color: white;
+.refresh-btn:disabled {
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Responsive adjustments for content header */
+@media (max-width: 768px) {
+  .content-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .page-info {
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .page-indicator {
+    font-size: 12px;
+  }
+
+  .content-title {
+    font-size: 24px;
+  }
+
+  .refresh-btn {
+    padding: 6px 12px;
+    font-size: 11px;
+  }
+}
+
+@media (max-width: 576px) {
+  .content-header {
+    gap: 8px;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+  }
+
+  .page-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .page-indicator {
+    font-size: 11px;
+  }
+
+  .content-title {
+    font-size: 20px;
+  }
+
+  .refresh-btn {
+    align-self: flex-end;
+  }
+}
+
+/* Ensure content section has proper spacing */
+.content-section {
+  padding: 25px;
+  background: white;
   border-radius: 15px;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(255, 149, 0, 0.08);
-  border: 1px solid rgba(255, 149, 0, 0.1);
-  width: 100%;
-  /* Add this to ensure consistent container width */
-  min-height: 600px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+  overflow: hidden; /* Prevent margin collapse */
+}
+
+/* Fix table container spacing */
+.table-container {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+/* Alert spacing fix */
+.alert {
+  border-radius: 8px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  margin-bottom: 20px !important; /* Consistent spacing */
+}
+
+/* Table styles */
+.table {
+  width: 100% !important;
+  table-layout: fixed !important;
+  margin-bottom: 0;
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.table th:nth-child(1),
+.table td:nth-child(1) {
+  width: 15% !important;
+  min-width: 80px !important;
+}
+
+.table th:nth-child(2),
+.table td:nth-child(2) {
+  width: 25% !important;
+  min-width: 120px !important;
+}
+
+.table th:nth-child(3),
+.table td:nth-child(3) {
+  width: 15% !important;
+  min-width: 80px !important;
+}
+
+.table th:nth-child(4),
+.table td:nth-child(4) {
+  width: 20% !important;
+  min-width: 120px !important;
+}
+
+.table th:nth-child(5),
+.table td:nth-child(5) {
+  width: 25% !important;
+  min-width: 150px !important;
 }
 
 .table-header {
@@ -198,50 +527,9 @@
   background-color: #ff9500;
 }
 
-.table {
-  width: 100% !important;
-  table-layout: fixed !important;
-  margin-bottom: 0;
-  /* Add these for consistent layout */
-  border-collapse: separate !important;
-  border-spacing: 0 !important;
-}
-
-/* Make column widths more specific and consistent */
-.table th:nth-child(1),
-.table td:nth-child(1) {
-  width: 15% !important;
-  min-width: 80px !important;
-} /* Table */
-
-.table th:nth-child(2),
-.table td:nth-child(2) {
-  width: 25% !important;
-  min-width: 120px !important;
-} /* Name */
-
-.table th:nth-child(3),
-.table td:nth-child(3) {
-  width: 15% !important;
-  min-width: 80px !important;
-} /* Pax */
-
-.table th:nth-child(4),
-.table td:nth-child(4) {
-  width: 20% !important;
-  min-width: 120px !important;
-} /* Table Status */
-
-.table th:nth-child(5),
-.table td:nth-child(5) {
-  width: 25% !important;
-  min-width: 150px !important;
-} /* Action */
-
 .table tbody tr {
   transition: all 0.3s ease;
   border-bottom: 1px solid #f1f3f4;
-  /* Ensure consistent row height */
   height: 70px;
 }
 
@@ -254,23 +542,19 @@
   font-family: "Poppins", sans-serif;
   word-wrap: break-word;
   overflow: hidden;
-  /* Add consistent cell styling */
   white-space: nowrap;
   text-overflow: ellipsis;
   box-sizing: border-box;
 }
 
 .table thead th {
-  /* Ensure header consistency */
   height: 60px;
   box-sizing: border-box;
 }
 
-/* Table responsive wrapper with fixed dimensions */
 .table-responsive {
   width: 100% !important;
   overflow-x: auto;
-  /* Add consistent wrapper height */
   min-height: 500px;
 }
 
@@ -280,7 +564,6 @@
   max-width: 100% !important;
 }
 
-/* Add consistent pagination height */
 .table-pagination {
   padding: 20px;
   background-color: #faf9f6;
@@ -291,7 +574,6 @@
   align-items: center;
 }
 
-/* More specific selectors for pagination */
 .table-pagination .custom-pagination .page-link {
   color: #ff9500 !important;
   border-color: #ff9500 !important;
@@ -340,7 +622,6 @@
   box-shadow: none;
 }
 
-/* Additional specificity for Bootstrap overrides */
 .cashier-dashboard .table-pagination .pagination .page-link {
   color: #ff9500 !important;
   border-color: #ff9500 !important;
@@ -358,7 +639,7 @@
   color: white !important;
 }
 
-/* Badge styling with improved colors */
+/* Badge styling */
 .badge {
   font-size: 12px;
   padding: 10px 15px;
@@ -385,26 +666,40 @@
   color: white !important;
 }
 
-/* Add these styles to your existing CSS file */
+.badge.bg-info {
+  background-color: #17a2b8 !important;
+  color: white !important;
+}
 
+/* Button styles */
 .refresh-btn {
   border-color: #ff9500 !important;
   color: #ff9500 !important;
   font-weight: 600;
-  padding: 6px 12px;
-  border-radius: 6px;
+  padding: 8px 16px; /* Consistent padding */
+  border-radius: 8px;
   transition: all 0.2s ease;
+  font-family: "Poppins", sans-serif;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0; /* Remove any margin */
+  flex-shrink: 0;
 }
 
 .refresh-btn:hover {
   background-color: #ff9500 !important;
   border-color: #ff9500 !important;
   color: white !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 149, 0, 0.2);
 }
 
-.badge.bg-info {
-  background-color: #17a2b8 !important;
-  color: white !important;
+.refresh-btn:disabled {
+  opacity: 0.6;
+  transform: none;
+  box-shadow: none;
 }
 
 .btn-outline-info {
@@ -431,9 +726,9 @@
   border-radius: 8px;
   font-family: "Poppins", sans-serif;
   font-weight: 500;
+  margin-bottom: 20px !important; /* Consistent spacing */
 }
 
-/* Button styling with improved colors */
 .btn-sm {
   font-size: 11px;
   padding: 8px 16px;
@@ -483,139 +778,4 @@
   color: white;
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(255, 149, 0, 0.3);
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: -100%;
-    height: 100vh;
-    width: 280px;
-    z-index: 1000;
-    transition: left 0.3s ease;
-  }
-
-  .sidebar.show {
-    left: 0;
-  }
-
-  .main-content {
-    margin-left: 0;
-    width: 100%;
-    padding: 15px;
-  }
-
-  .content-title {
-    font-size: 22px;
-  }
-
-  .content-section {
-    padding: 20px;
-  }
-
-  .table-header th {
-    font-size: 12px;
-    padding: 15px 8px;
-  }
-
-  .table tbody td {
-    padding: 12px 8px;
-    font-size: 14px;
-  }
-
-  .content-header {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
-@media (max-width: 576px) {
-  .content-section {
-    padding: 15px;
-  }
-
-  .content-title {
-    font-size: 20px;
-  }
-
-  .table-responsive {
-    font-size: 12px;
-  }
-
-  .btn-sm {
-    font-size: 10px;
-    padding: 6px 12px;
-  }
-
-  .badge {
-    font-size: 10px;
-    padding: 6px 10px;
-  }
-
-  .page-indicator {
-    font-size: 11px;
-    padding: 6px 12px;
-  }
-
-  .table th:nth-child(1) {
-    width: 12%;
-  }
-  .table th:nth-child(2) {
-    width: 22%;
-  }
-  .table th:nth-child(3) {
-    width: 12%;
-  }
-  .table th:nth-child(4) {
-    width: 24%;
-  }
-  .table th:nth-child(5) {
-    width: 30%;
-  }
-}
-
-/* Additional styling for better consistency */
-.table {
-  font-family: "Poppins", sans-serif;
-}
-
-.table th,
-.table td {
-  border-color: #f1f3f4;
-}
-
-.table-striped > tbody > tr:nth-of-type(odd) > td {
-  background-color: rgba(250, 249, 246, 0.5);
-}
-
-/* Focus states */
-.sidebar-link:focus {
-  outline: 3px solid rgba(255, 255, 255, 0.5);
-  outline-offset: 2px;
-}
-
-.btn:focus {
-  box-shadow: 0 0 0 0.25rem rgba(255, 149, 0, 0.25);
-}
-
-/* Smooth transitions */
-.content-section {
-  transition: all 0.3s ease;
-}
-
-.table tbody tr {
-  transition: all 0.3s ease;
-}
-
-/* Table responsive wrapper to ensure consistent width */
-.table-responsive {
-  width: 100%;
-  overflow-x: auto;
-}
-
-.table-responsive .table {
-  min-width: 800px;
-  width: 100%;
 }

@@ -1,0 +1,892 @@
+/* OrderTab Styles */
+.order-tab {
+  height: 100%;
+  background-color: #faf9f6;
+  overflow: hidden; /* Prevent horizontal scroll */
+}
+
+.order-tab .container-fluid {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.order-tab .row {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+.categories-sidebar {
+  background-color: white !important;
+  border-right: 1px solid #e9ecef;
+  height: 100vh;
+  overflow-y: auto;
+  padding: 0;
+}
+
+.categories-content {
+  padding: 20px 15px;
+}
+
+.categories-title {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  color: #ff9500 !important;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.categories-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.category-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px 10px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.category-item:hover {
+  background-color: #faf9f6 !important;
+  border-color: #ff9500 !important;
+}
+
+.category-item.active {
+  background-color: #ff9500 !important;
+  color: white !important;
+  border-color: #ff9500 !important;
+}
+
+.category-image {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.category-name {
+  font-family: "Poppins", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.2;
+}
+
+.menu-content {
+  padding: 20px;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.menu-header {
+  margin-bottom: 20px;
+}
+
+.menu-title {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  color: #ff9500 !important;
+  font-size: 28px;
+}
+
+.menu-items-container {
+  height: calc(100vh - 120px);
+  overflow-y: auto;
+}
+
+.menu-items-grid {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start; /* This prevents gaps between rows */
+}
+
+.menu-item-card {
+  border: 1px solid #e9ecef !important;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background-color: white !important;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 280px; /* Set minimum height */
+  max-height: 320px; /* Set maximum height */
+}
+
+.menu-item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 149, 0, 0.15) !important;
+  border-color: #ff9500 !important;
+}
+
+.menu-item-image-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+  flex: 0 0 auto; /* Don't grow or shrink */
+  height: 180px; /* Fixed height */
+}
+
+.menu-item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.menu-item-body {
+  padding: 15px;
+  text-align: center;
+  flex: 1; /* Take remaining space */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.menu-item-name {
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2c3e50 !important;
+  margin-bottom: 8px;
+  line-height: 1.3;
+  flex: 1; /* Take available space */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.menu-item-price {
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ff9500 !important;
+  margin-bottom: 0;
+  margin-top: auto; /* Push to bottom */
+}
+
+/* Order Summary Styles */
+.order-summary-sidebar {
+  background: linear-gradient(
+    135deg,
+    #ff9500 0%,
+    #ff7b00 50%,
+    #ff6b00 100%
+  ) !important;
+  color: white !important;
+  padding: 0;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden; /* Prevent horizontal overflow */
+  max-width: 33.33%;
+  flex: 0 0 33.33%;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.order-summary-content {
+  padding: 20px 15px; /* Reduced horizontal padding */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.order-header {
+  margin-bottom: 15px;
+}
+
+/* Move the form section to be right after the header */
+.order-form-section {
+  order: 1; /* This will place it after the header */
+  margin-bottom: 15px;
+  flex: 0 0 auto;
+  margin-top: 0;
+}
+
+/* Move the order list section after the form */
+.order-list-section {
+  order: 2; /* This will place it after the form */
+  flex: 1; /* Allow it to take up available space */
+  margin-bottom: 15px;
+  background-color: transparent !important;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Adjust the items container to fill available space */
+.order-items-container {
+  flex: 1; /* Take up remaining space */
+  overflow-y: auto;
+  margin-bottom: 5px;
+}
+
+/* Keep the total section at the bottom */
+.order-total-section {
+  order: 3; /* This will place it at the bottom */
+  margin-top: auto;
+  border-top: 2px solid rgba(255, 255, 255, 0.3);
+  padding-top: 15px;
+  flex: 0 0 auto;
+}
+
+.order-title {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  margin-bottom: 5px;
+  color: white !important;
+}
+
+.order-subtitle {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 0;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+.order-list-header {
+  display: grid;
+  grid-template-columns: 3fr 1fr; /* Changed from 2fr 1fr 1fr 1fr to just Order List and Price */
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  margin-bottom: 15px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  color: white !important;
+}
+
+.order-item {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border: none !important;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  padding: 15px;
+}
+
+.order-item-content {
+  color: white !important;
+}
+
+.order-item-name {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 8px; /* Reduced from 10px */
+  color: white !important;
+}
+
+.order-item-controls {
+  display: grid;
+  grid-template-columns: 3fr 1fr; /* Changed to match header: Order List (with quantity controls) and Price */
+  gap: 10px;
+  align-items: center;
+}
+
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 6px; /* Reduced gap */
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+}
+
+.quantity-btn {
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  color: white !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  width: 28px;
+  height: 28px;
+  padding: 0 !important; /* Force no padding */
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex !important; /* Use flexbox for perfect centering */
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important; /* Reset line height */
+  min-width: 28px; /* Ensure consistent width */
+}
+
+.quantity-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  border-color: white !important;
+  color: white !important;
+}
+
+.quantity-btn:focus {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  border-color: white !important;
+  color: white !important;
+  box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25) !important;
+}
+
+.quantity-display {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  min-width: 24px; /* Slightly larger min-width */
+  text-align: center;
+  color: white !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 28px; /* Match button height */
+}
+
+.price-display {
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  font-size: 14px;
+  text-align: center;
+  color: white !important;
+}
+
+.remove-btn {
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  color: white !important;
+  background-color: transparent !important;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  font-size: 12px;
+  padding: 0 !important; /* Force no padding */
+  display: flex !important; /* Use flexbox for perfect centering */
+  align-items: center !important;
+  justify-content: center !important;
+  margin-left: 10px;
+  line-height: 1 !important; /* Reset line height */
+  min-width: 28px; /* Ensure consistent width */
+}
+
+.remove-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
+  color: white !important;
+}
+
+/* Empty cart message */
+.empty-cart {
+  text-align: center;
+  padding: 20px 20px; /* Reduced from 40px 20px */
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-family: "Poppins", sans-serif;
+}
+
+.order-form-section {
+  margin-bottom: 10px; /* Reduced from 15px */
+  flex: 0 0 auto;
+  margin-top: 0; /* Ensure no top margin */
+}
+
+/* Add specific spacing control for form groups */
+.order-form-section .form-group,
+.order-form-section .mb-3 {
+  margin-bottom: 12px !important; /* Reduced spacing between form elements */
+}
+
+/* Reduce padding in order summary content for tighter layout */
+.order-summary-content {
+  padding: 15px; /* Reduced from 20px */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.order-header {
+  margin-bottom: 15px; /* Reduced from 20px */
+}
+
+/* Ensure the empty cart message doesn't take up too much space */
+.empty-cart {
+  text-align: center;
+  padding: 20px 20px; /* Reduced from 40px 20px */
+  color: rgba(255, 255, 255, 0.7) !important;
+  font-family: "Poppins", sans-serif;
+}
+
+.order-total-section {
+  margin-top: auto;
+  border-top: 2px solid rgba(255, 255, 255, 0.3);
+  padding-top: 20px;
+}
+
+.total-display {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.total-display h4 {
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-size: 24px;
+  color: white !important;
+  margin-bottom: 0;
+}
+
+.proceed-btn {
+  width: 100%;
+  padding: 15px 10px; /* Adjusted padding */
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+  border: none !important;
+  color: white !important;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+  transition: all 0.3s ease;
+}
+
+.proceed-btn:hover {
+  background: linear-gradient(135deg, #218838 0%, #1c7a6b 100%) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+}
+
+.proceed-btn:focus {
+  background-color: #218838 !important;
+  border-color: #1e7e34 !important;
+  color: white !important;
+  box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25) !important;
+}
+
+.proceed-btn:disabled {
+  background-color: rgba(255, 255, 255, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Fix for Bootstrap ListGroup items */
+.order-summary-sidebar .list-group-item {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: transparent !important;
+  color: white !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .categories-sidebar {
+    width: 100px;
+  }
+
+  .category-image {
+    width: 40px;
+    height: 40px;
+  }
+
+  .category-name {
+    font-size: 10px;
+  }
+
+  .menu-item-image {
+    height: 120px;
+  }
+
+  .menu-item-name {
+    font-size: 12px;
+    height: 30px;
+  }
+
+  .menu-item-price {
+    font-size: 14px;
+  }
+
+  .order-list-header {
+    grid-template-columns: 2fr 1fr; /* Adjust for mobile */
+    gap: 5px;
+  }
+
+  .order-item-controls {
+    grid-template-columns: 2fr 1fr; /* Adjust for mobile */
+    gap: 10px;
+  }
+
+  .quantity-controls {
+    justify-content: flex-start;
+  }
+}
+
+/* Style the form labels and inputs */
+.order-form-section .form-label {
+  color: white !important;
+  font-family: "Poppins", sans-serif;
+  font-weight: 600;
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.order-form-section .form-control {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  color: #2c3e50 !important;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.order-form-section .form-control:focus {
+  background: white !important;
+  border-color: white !important;
+  color: #2c3e50 !important;
+  box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25) !important;
+}
+
+.order-form-section .form-check-label {
+  color: white !important;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.order-form-section .form-check-input {
+  background-color: transparent !important;
+  border-color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.order-form-section .form-check-input:checked {
+  background-color: white !important;
+  border-color: white !important;
+}
+
+.order-form-section .form-check-input:focus {
+  border-color: white !important;
+  box-shadow: 0 0 0 0.25rem rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Fix the order tab container to prevent overflow */
+.order-tab {
+  height: 100%;
+  background-color: #faf9f6;
+  overflow: hidden; /* Prevent horizontal scroll */
+}
+
+.order-tab .container-fluid {
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.order-tab .row {
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+/* Update order summary sidebar */
+.order-summary-sidebar {
+  background: linear-gradient(
+    135deg,
+    #ff9500 0%,
+    #ff7b00 50%,
+    #ff6b00 100%
+  ) !important;
+  color: white !important;
+  padding: 0;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden; /* Prevent horizontal overflow */
+  max-width: 33.33%;
+  flex: 0 0 33.33%;
+  box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.order-summary-content {
+  padding: 20px 15px; /* Reduced horizontal padding */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Fix form controls to prevent overflow */
+.order-form-section .form-control {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  color: #2c3e50 !important;
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Fix button widths */
+.proceed-btn {
+  width: 100%;
+  padding: 15px 10px; /* Adjusted padding */
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+  border: none !important;
+  color: white !important;
+  box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+  transition: all 0.3s ease;
+}
+
+.proceed-btn:hover {
+  background: linear-gradient(135deg, #218838 0%, #1c7a6b 100%) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+}
+
+/* Fix quantity controls */
+.quantity-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Slightly increased gap for better spacing */
+  justify-content: flex-start;
+  flex-wrap: nowrap;
+}
+
+.quantity-btn {
+  border-color: rgba(255, 255, 255, 0.6) !important;
+  color: white !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  width: 28px;
+  height: 28px;
+  padding: 0 !important; /* Force no padding */
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  display: flex !important; /* Use flexbox for perfect centering */
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1 !important; /* Reset line height */
+  min-width: 28px; /* Ensure consistent width */
+}
+
+.remove-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  font-size: 12px;
+  padding: 0 !important; /* Force no padding */
+  display: flex !important; /* Use flexbox for perfect centering */
+  align-items: center !important;
+  justify-content: center !important;
+  margin-left: 10px;
+  line-height: 1 !important; /* Reset line height */
+  min-width: 28px; /* Ensure consistent width */
+}
+
+/* Fix menu item cards - prevent stretching */
+.menu-item-card {
+  border: 1px solid #e9ecef !important;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background-color: white !important;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 280px; /* Set minimum height */
+  max-height: 320px; /* Set maximum height */
+}
+
+.menu-item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 149, 0, 0.15) !important;
+  border-color: #ff9500 !important;
+}
+
+/* Fix menu items container to prevent stretching */
+.menu-items-container {
+  height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding: 0 10px; /* Add horizontal padding */
+}
+
+.menu-items-grid {
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start; /* This prevents gaps between rows */
+}
+
+/* Remove Bootstrap's row class behavior that causes gaps */
+.menu-items-grid.row {
+  margin: 0 !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-content: flex-start !important;
+  align-items: flex-start !important;
+}
+
+/* Fix column spacing and alignment */
+.menu-items-grid .col-6,
+.menu-items-grid .col-sm-6,
+.menu-items-grid .col-md-4,
+.menu-items-grid .col-lg-3,
+.menu-items-grid .col-xl-3 {
+  display: flex !important;
+  align-self: flex-start !important; /* Prevent stretching */
+  margin-bottom: 20px !important; /* Consistent bottom margin */
+  padding-left: 10px !important; /* Consistent padding */
+  padding-right: 10px !important;
+}
+
+/* Ensure consistent card heights */
+.menu-item-card {
+  border: 1px solid #e9ecef !important;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  background-color: white !important;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-height: 280px; /* Set minimum height */
+  max-height: 320px; /* Set maximum height */
+}
+
+.menu-item-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 149, 0, 0.15) !important;
+  border-color: #ff9500 !important;
+}
+
+/* Fix image container */
+.menu-item-image-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+  flex: 0 0 auto; /* Don't grow or shrink */
+  height: 180px; /* Fixed height */
+}
+
+.menu-item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+/* Fix card body */
+.menu-item-body {
+  padding: 15px;
+  text-align: center;
+  flex: 1; /* Take remaining space */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.menu-item-name {
+  font-family: "Poppins", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2c3e50 !important;
+  margin-bottom: 8px;
+  line-height: 1.3;
+  flex: 1; /* Take available space */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.menu-item-price {
+  font-family: "Poppins", sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #ff9500 !important;
+  margin-bottom: 0;
+  margin-top: auto; /* Push to bottom */
+}
+
+/* Remove any margin collapse issues */
+.menu-items-container {
+  height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding: 0 10px; /* Add horizontal padding */
+}
+
+/* Fix responsive behavior */
+@media (max-width: 1200px) {
+  .menu-items-grid .col-lg-3,
+  .menu-items-grid .col-xl-3 {
+    flex: 0 0 25%;
+    max-width: 25%;
+  }
+}
+
+@media (max-width: 992px) {
+  .menu-items-grid .col-md-4 {
+    flex: 0 0 33.333333%;
+    max-width: 33.333333%;
+  }
+}
+
+@media (max-width: 768px) {
+  .menu-items-grid .col-sm-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+  
+  .menu-item-card {
+    min-height: 240px;
+    max-height: 280px;
+  }
+  
+  .menu-item-image-container {
+    height: 140px;
+  }
+}
+
+@media (max-width: 576px) {
+  .menu-items-grid .col-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+    padding-left: 5px !important;
+    padding-right: 5px !important;
+  }
+  
+  .menu-item-card {
+    min-height: 200px;
+    max-height: 240px;
+  }
+  
+  .menu-item-image-container {
+    height: 120px;
+  }
+  
+  .menu-item-body {
+    padding: 10px;
+  }
+  
+  .menu-item-name {
+    font-size: 12px;
+  }
+  
+  .menu-item-price {
+    font-size: 14px;
+  }
+}
