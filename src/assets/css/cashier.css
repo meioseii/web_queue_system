@@ -1,0 +1,621 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+* {
+  font-family: "Poppins", sans-serif;
+}
+
+.cashier-dashboard {
+  height: 100vh;
+  padding: 0;
+  background-color: #faf9f6;
+  font-family: "Poppins", sans-serif;
+}
+
+.sidebar {
+  background-color: #ff9500;
+  color: white;
+  padding: 0;
+  border-right: 3px solid #ff9500;
+  box-shadow: 2px 0 10px rgba(255, 149, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 25%;
+  z-index: 1000;
+  overflow-y: auto;
+}
+
+.sidebar-content {
+  padding: 25px 20px;
+  height: 100%;
+}
+
+.sidebar-title {
+  color: white;
+  margin-bottom: 35px;
+  font-size: 20px;
+  font-weight: 700;
+  text-align: center;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+  padding-bottom: 20px;
+  font-family: "Poppins", sans-serif;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-nav {
+  gap: 8px;
+}
+
+.sidebar-link {
+  color: rgba(255, 255, 255, 0.8) !important;
+  padding: 18px 22px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  font-weight: 500;
+  border: 2px solid transparent;
+  font-family: "Poppins", sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar-link::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.sidebar-link:hover::before {
+  left: 100%;
+}
+
+.sidebar-link:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: white !important;
+  transform: translateX(8px);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.sidebar-link.active {
+  background-color: white;
+  color: #ff9500 !important;
+  border-color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+}
+
+.main-content {
+  margin-left: 25%;
+  padding: 25px;
+  background-color: #faf9f6;
+  overflow-y: auto;
+  min-height: 100vh;
+}
+
+.content-section {
+  background-color: #ffffff;
+  border-radius: 15px;
+  padding: 30px;
+  box-shadow: 0 8px 25px rgba(255, 149, 0, 0.08);
+  border: 1px solid rgba(255, 149, 0, 0.1);
+}
+
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.content-title {
+  color: #ff9500;
+  margin-bottom: 0;
+  font-weight: 700;
+  font-size: 28px;
+  font-family: "Poppins", sans-serif;
+  position: relative;
+}
+
+.content-title::after {
+  content: "";
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 60px;
+  height: 4px;
+  background-color: #ff9500;
+  border-radius: 2px;
+}
+
+.page-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.page-indicator {
+  background-color: #ff9500;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(255, 149, 0, 0.2);
+}
+
+.table-container {
+  background-color: white;
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(255, 149, 0, 0.08);
+  border: 1px solid rgba(255, 149, 0, 0.1);
+  width: 100%;
+  /* Add this to ensure consistent container width */
+  min-height: 600px;
+}
+
+.table-header {
+  background-color: #ff9500;
+}
+
+.table-header th {
+  color: #2c3e50 !important;
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  font-weight: 700;
+  text-align: center;
+  padding: 20px 15px;
+  border: 2px solid #ff9500 !important;
+  border-bottom: 3px solid #ff9500 !important;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: "Poppins", sans-serif;
+  text-shadow: none;
+  position: relative;
+}
+
+.table-header th::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #ff9500;
+}
+
+.table {
+  width: 100% !important;
+  table-layout: fixed !important;
+  margin-bottom: 0;
+  /* Add these for consistent layout */
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+/* Make column widths more specific and consistent */
+.table th:nth-child(1),
+.table td:nth-child(1) {
+  width: 15% !important;
+  min-width: 80px !important;
+} /* Table */
+
+.table th:nth-child(2),
+.table td:nth-child(2) {
+  width: 25% !important;
+  min-width: 120px !important;
+} /* Name */
+
+.table th:nth-child(3),
+.table td:nth-child(3) {
+  width: 15% !important;
+  min-width: 80px !important;
+} /* Pax */
+
+.table th:nth-child(4),
+.table td:nth-child(4) {
+  width: 20% !important;
+  min-width: 120px !important;
+} /* Table Status */
+
+.table th:nth-child(5),
+.table td:nth-child(5) {
+  width: 25% !important;
+  min-width: 150px !important;
+} /* Action */
+
+.table tbody tr {
+  transition: all 0.3s ease;
+  border-bottom: 1px solid #f1f3f4;
+  /* Ensure consistent row height */
+  height: 70px;
+}
+
+.table tbody td {
+  text-align: center;
+  vertical-align: middle;
+  padding: 18px 15px;
+  font-weight: 500;
+  border-color: #f1f3f4;
+  font-family: "Poppins", sans-serif;
+  word-wrap: break-word;
+  overflow: hidden;
+  /* Add consistent cell styling */
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  box-sizing: border-box;
+}
+
+.table thead th {
+  /* Ensure header consistency */
+  height: 60px;
+  box-sizing: border-box;
+}
+
+/* Table responsive wrapper with fixed dimensions */
+.table-responsive {
+  width: 100% !important;
+  overflow-x: auto;
+  /* Add consistent wrapper height */
+  min-height: 500px;
+}
+
+.table-responsive .table {
+  min-width: 800px !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+/* Add consistent pagination height */
+.table-pagination {
+  padding: 20px;
+  background-color: #faf9f6;
+  display: flex;
+  justify-content: center;
+  border-top: 1px solid #e9ecef;
+  height: 80px;
+  align-items: center;
+}
+
+/* More specific selectors for pagination */
+.table-pagination .custom-pagination .page-link {
+  color: #ff9500 !important;
+  border-color: #ff9500 !important;
+  font-weight: 600;
+  padding: 10px 15px;
+  margin: 0 2px;
+  border-radius: 8px;
+  font-family: "Poppins", sans-serif;
+  transition: all 0.2s ease;
+  background-color: white !important;
+}
+
+.table-pagination .custom-pagination .page-link:hover {
+  background-color: #ff9500 !important;
+  border-color: #ff9500 !important;
+  color: white !important;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 149, 0, 0.2);
+}
+
+.table-pagination .custom-pagination .page-link:focus {
+  background-color: #ff9500 !important;
+  border-color: #ff9500 !important;
+  color: white !important;
+  box-shadow: 0 0 0 0.25rem rgba(255, 149, 0, 0.25);
+}
+
+.table-pagination .custom-pagination .page-item.active .page-link {
+  background-color: #ff9500 !important;
+  border-color: #ff9500 !important;
+  color: white !important;
+  box-shadow: 0 2px 8px rgba(255, 149, 0, 0.3);
+}
+
+.table-pagination .custom-pagination .page-item.disabled .page-link {
+  color: #6c757d !important;
+  background-color: #fff !important;
+  border-color: #dee2e6 !important;
+}
+
+.table-pagination .custom-pagination .page-item.disabled .page-link:hover {
+  background-color: #fff !important;
+  border-color: #dee2e6 !important;
+  color: #6c757d !important;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Additional specificity for Bootstrap overrides */
+.cashier-dashboard .table-pagination .pagination .page-link {
+  color: #ff9500 !important;
+  border-color: #ff9500 !important;
+}
+
+.cashier-dashboard .table-pagination .pagination .page-item.active .page-link {
+  background-color: #ff9500 !important;
+  border-color: #ff9500 !important;
+  color: white !important;
+}
+
+.cashier-dashboard .table-pagination .pagination .page-link:hover {
+  background-color: #ff9500 !important;
+  border-color: #ff9500 !important;
+  color: white !important;
+}
+
+/* Badge styling with improved colors */
+.badge {
+  font-size: 12px;
+  padding: 10px 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-family: "Poppins", sans-serif;
+  border-radius: 20px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.badge.bg-success {
+  background-color: #28a745 !important;
+  color: white !important;
+}
+
+.badge.bg-warning {
+  background-color: #ff9500 !important;
+  color: white !important;
+}
+
+.badge.bg-danger {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+
+/* Add these styles to your existing CSS file */
+
+.refresh-btn {
+  border-color: #ff9500 !important;
+  color: #ff9500 !important;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.refresh-btn:hover {
+  background-color: #ff9500 !important;
+  border-color: #ff9500 !important;
+  color: white !important;
+}
+
+.badge.bg-info {
+  background-color: #17a2b8 !important;
+  color: white !important;
+}
+
+.btn-outline-info {
+  border-color: #17a2b8;
+  color: #17a2b8;
+}
+
+.btn-outline-info:hover {
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+}
+
+.content-header .page-info {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.alert {
+  border-radius: 8px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+}
+
+/* Button styling with improved colors */
+.btn-sm {
+  font-size: 11px;
+  padding: 8px 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  border-radius: 20px;
+  transition: all 0.3s ease;
+  font-family: "Poppins", sans-serif;
+  border-width: 2px;
+}
+
+.btn-outline-danger {
+  border-color: #dc3545;
+  color: #dc3545;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.btn-outline-warning {
+  border-color: #ff9500;
+  color: #ff9500;
+}
+
+.btn-outline-warning:hover {
+  background-color: #ff9500;
+  border-color: #ff9500;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 149, 0, 0.3);
+}
+
+.btn-outline-primary {
+  border-color: #ff9500;
+  color: #ff9500;
+}
+
+.btn-outline-primary:hover {
+  background-color: #ff9500;
+  border-color: #ff9500;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 149, 0, 0.3);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    height: 100vh;
+    width: 280px;
+    z-index: 1000;
+    transition: left 0.3s ease;
+  }
+
+  .sidebar.show {
+    left: 0;
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 15px;
+  }
+
+  .content-title {
+    font-size: 22px;
+  }
+
+  .content-section {
+    padding: 20px;
+  }
+
+  .table-header th {
+    font-size: 12px;
+    padding: 15px 8px;
+  }
+
+  .table tbody td {
+    padding: 12px 8px;
+    font-size: 14px;
+  }
+
+  .content-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 576px) {
+  .content-section {
+    padding: 15px;
+  }
+
+  .content-title {
+    font-size: 20px;
+  }
+
+  .table-responsive {
+    font-size: 12px;
+  }
+
+  .btn-sm {
+    font-size: 10px;
+    padding: 6px 12px;
+  }
+
+  .badge {
+    font-size: 10px;
+    padding: 6px 10px;
+  }
+
+  .page-indicator {
+    font-size: 11px;
+    padding: 6px 12px;
+  }
+
+  .table th:nth-child(1) {
+    width: 12%;
+  }
+  .table th:nth-child(2) {
+    width: 22%;
+  }
+  .table th:nth-child(3) {
+    width: 12%;
+  }
+  .table th:nth-child(4) {
+    width: 24%;
+  }
+  .table th:nth-child(5) {
+    width: 30%;
+  }
+}
+
+/* Additional styling for better consistency */
+.table {
+  font-family: "Poppins", sans-serif;
+}
+
+.table th,
+.table td {
+  border-color: #f1f3f4;
+}
+
+.table-striped > tbody > tr:nth-of-type(odd) > td {
+  background-color: rgba(250, 249, 246, 0.5);
+}
+
+/* Focus states */
+.sidebar-link:focus {
+  outline: 3px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+.btn:focus {
+  box-shadow: 0 0 0 0.25rem rgba(255, 149, 0, 0.25);
+}
+
+/* Smooth transitions */
+.content-section {
+  transition: all 0.3s ease;
+}
+
+.table tbody tr {
+  transition: all 0.3s ease;
+}
+
+/* Table responsive wrapper to ensure consistent width */
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table-responsive .table {
+  min-width: 800px;
+  width: 100%;
+}

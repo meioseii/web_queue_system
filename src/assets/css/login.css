@@ -1,0 +1,204 @@
+/* Import Poppins font from Google Fonts */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+/* Apply Poppins to entire login container */
+.login-container {
+  font-family: "Poppins", sans-serif;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.left-section {
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.right-section {
+  background: linear-gradient(135deg, #fc9a12 0%, #ff9500 100%);
+  min-height: 100vh;
+}
+
+.brand-logo {
+  margin-bottom: 2rem;
+}
+
+.logo-placeholder {
+  width: 120px;
+  height: 80px;
+  background-color: #d2691e;
+  border-radius: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+  margin: 0 auto 1rem;
+  border: 3px solid #8b4513;
+}
+
+.brand-title {
+  font-family: "Poppins", sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #ff9500;
+  margin-bottom: 1rem;
+}
+
+.brand-tagline {
+  font-family: "Poppins", sans-serif;
+  color: #6c757d;
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin: 0;
+}
+
+.login-form-container {
+  width: 100%;
+  max-width: 600px;
+  padding: 2rem;
+}
+
+.form-title {
+  font-family: "Poppins", sans-serif;
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.form-subtitle {
+  font-family: "Poppins", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 400;
+  opacity: 0.9;
+  margin-bottom: 2rem;
+}
+
+.input-wrapper {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;
+  z-index: 3;
+  opacity: 0.8;
+}
+
+.custom-input {
+  font-family: "Poppins", sans-serif;
+  background: transparent !important;
+  border: 2px solid white !important;
+  border-radius: 50px !important;
+  color: white !important;
+  font-size: 1rem;
+  font-weight: 400;
+  width: 100%;
+  padding: 0.875rem 1rem 0.875rem 3rem !important;
+  height: auto;
+}
+
+.custom-input::placeholder {
+  font-family: "Poppins", sans-serif;
+  color: white !important;
+  opacity: 0.8;
+  font-weight: 400;
+}
+
+.custom-input:focus {
+  background: transparent !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 0 0 0 0.2rem rgba(255, 255, 255, 0.25) !important;
+  color: white !important;
+}
+
+.custom-input.is-invalid {
+  border-color: #ffc107 !important;
+}
+
+.forgot-password {
+  font-family: "Poppins", sans-serif;
+  color: white;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 400;
+  opacity: 0.9;
+}
+
+.forgot-password:hover {
+  color: white;
+  text-decoration: underline;
+  opacity: 1;
+}
+
+.signin-btn {
+  font-family: "Poppins", sans-serif;
+  background-color: white !important;
+  border: none !important;
+  color: #ff8c00 !important;
+  font-weight: 600;
+  font-size: 1.1rem;
+  padding: 0.875rem 1rem;
+  border-radius: 50px !important;
+  transition: all 0.3s ease;
+}
+
+.signin-btn:hover {
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  color: #ff6600 !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.signin-btn:focus {
+  background-color: white !important;
+  color: #ff8c00 !important;
+  box-shadow: 0 0 0 0.2rem rgba(255, 140, 0, 0.25) !important;
+}
+
+/* Error messages */
+.text-warning {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .left-section {
+    min-height: 40vh;
+  }
+
+  .right-section {
+    min-height: 60vh;
+  }
+
+  .form-title {
+    font-size: 2.5rem;
+  }
+
+  .brand-title {
+    font-size: 2rem;
+  }
+
+  .logo-placeholder {
+    width: 100px;
+    height: 70px;
+    font-size: 2.5rem;
+  }
+
+  .login-form-container {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .form-title {
+    font-size: 2rem;
+  }
+
+  .brand-title {
+    font-size: 1.8rem;
+  }
+}
