@@ -190,7 +190,7 @@ const Kitchen = () => {
                   disabled={isLoadingOrders || isLoading} // Update to check both loading states
                   className="refresh-orders-btn"
                 >
-                  {(isLoadingOrders || isLoading) ? (
+                  {isLoadingOrders || isLoading ? (
                     <Spinner animation="border" size="sm" />
                   ) : (
                     "Refresh"
@@ -300,7 +300,14 @@ const Kitchen = () => {
             </div>
           </Col>
 
-          <Col xl={3} lg={4} md={5} sm={12} className="table-clean-section p-0">
+          <Col
+            xl={3}
+            lg={4}
+            md={5}
+            sm={12}
+            className="table-clean-section p-0"
+            style={{ order: 2 }}
+          >
             <div className="clean-section-content">
               <div className="clean-section-header">
                 <div className="d-flex justify-content-between align-items-center mb-3">
