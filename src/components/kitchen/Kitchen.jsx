@@ -212,12 +212,12 @@ const Kitchen = () => {
               )}
 
               <Row className="orders-grid g-2 g-md-3">
-                {isLoadingOrders && orders.length === 0 ? (
+                {isLoadingOrders && (!orders || orders.length === 0) ? (
                   <Col xs={12} className="text-center py-5">
                     <Spinner animation="border" variant="primary" />
                     <p className="mt-2">Loading orders...</p>
                   </Col>
-                ) : orders.length === 0 ? (
+                ) : (!orders || orders.length === 0) ? (
                   <Col xs={12} className="text-center py-5">
                     <h4 className="text-muted">No orders at the moment! 🍽️</h4>
                     <p className="text-muted">
@@ -225,7 +225,8 @@ const Kitchen = () => {
                     </p>
                   </Col>
                 ) : (
-                  orders.map((order) => (
+                  // Ensure orders is always an array before mapping
+                  (Array.isArray(orders) ? orders : []).map((order) => (
                     <Col
                       key={order.id}
                       xxl={3}
@@ -262,16 +263,18 @@ const Kitchen = () => {
                               </div>
                             </div>
                             <div className="order-items-list">
-                              {order.orders.map((item, index) => (
-                                <div key={index} className="order-row d-flex">
-                                  <div className="order-name-col">
-                                    [{item.name}]
+                              {/* Ensure order.orders is an array before mapping */}
+                              {Array.isArray(order.orders) &&
+                                order.orders.map((item, index) => (
+                                  <div key={index} className="order-row d-flex">
+                                    <div className="order-name-col">
+                                      [{item.name}]
+                                    </div>
+                                    <div className="order-quantity-col">
+                                      [{item.quantity}]
+                                    </div>
                                   </div>
-                                  <div className="order-quantity-col">
-                                    [{item.quantity}]
-                                  </div>
-                                </div>
-                              ))}
+                                ))}
                             </div>
                           </div>
                         </Card.Body>

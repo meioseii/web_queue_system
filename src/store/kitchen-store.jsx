@@ -40,12 +40,32 @@ const useKitchenStore = create((set, get) => ({
 
           try {
             // Subscribe to kitchen orders updates
-            stompClient.subscribe("/topic/kitchen/orders", (message) => {
+            stompClient.subscribe("/topic/table/orders", (message) => {
               try {
-                const ordersData = JSON.parse(message.body);
-                // Directly use the orders data without processing
-                set({ orders: ordersData });
+                const newOrderData = JSON.parse(message.body);
+                console.log("Received new order:", newOrderData);
+
+                const { orders } = get();
+
+                // Check if this order already exists in the current orders
+                const existingOrderIndex = orders.findIndex(
+                  (order) => order.id === newOrderData.id
+                );
+
+                let updatedOrders;
+                if (existingOrderIndex !== -1) {
+                  // Update existing order
+                  updatedOrders = orders.map((order, index) =>
+                    index === existingOrderIndex ? newOrderData : order
+                  );
+                } else {
+                  // Add new order to the beginning of the array
+                  updatedOrders = [newOrderData, ...orders];
+                }
+
+                set({ orders: updatedOrders });
               } catch (error) {
+                console.error("Failed to process orders update:", error);
                 set({
                   error: "Failed to process orders update",
                   message: "Failed to process orders update",

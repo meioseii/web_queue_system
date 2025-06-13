@@ -145,10 +145,7 @@ const Payment = () => {
               Loading...
             </>
           ) : (
-            <>
-              <i className="fas fa-sync-alt me-2"></i>
-              Refresh
-            </>
+            <>Refresh</>
           )}
         </Button>
       </div>
