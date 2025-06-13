@@ -121,9 +121,24 @@ const TablesTab = () => {
   const getActionButton = (action, tableData) => {
     if (!action) return "";
 
+    // If action is "Table to clean", return plain text instead of button
+    if (action === "Table to clean") {
+      return (
+        <span
+          className="text-uppercase fw-medium"
+          style={{
+            color: "#DC3545",
+            fontSize: "0.875rem",
+            fontWeight: "700",
+          }}
+        >
+          {action}
+        </span>
+      );
+    }
+
     let variant = "outline-primary";
-    if (action === "Table to clean") variant = "outline-danger";
-    else if (action === "Checkout") variant = "outline-warning";
+    if (action === "Checkout") variant = "outline-warning";
     else if (action === "Confirm/Missing") variant = "outline-info";
 
     return (

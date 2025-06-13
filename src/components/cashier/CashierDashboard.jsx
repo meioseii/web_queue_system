@@ -3,6 +3,7 @@ import { Container, Row, Col, Nav, Button } from "react-bootstrap";
 import TablesTab from "./tabs/TablesTab";
 import OrderTab from "./tabs/OrderTab";
 import AddQueue from "./tabs/AddQueue";
+import Payment from "./tabs/Payment";
 import useCashierStore from "../../store/cashier-store";
 import "../../assets/css/cashier.css";
 
@@ -82,12 +83,7 @@ const CashierDashboard = () => {
         return <OrderTab />;
 
       case "payment":
-        return (
-          <div className="content-section">
-            <h3 className="content-title">Payment</h3>
-            <p>Payment processing content will go here...</p>
-          </div>
-        );
+        return <Payment />;
 
       default:
         return <TablesTab />;
