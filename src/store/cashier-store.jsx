@@ -356,6 +356,59 @@ const useCashierStore = create((set, get) => ({
     }
   },
 
+  // Add customer to queue
+  addToQueue: async (guestData) => {
+    set({ isLoading: true, error: null, message: "" });
+
+    try {
+      const response = await fetch(`${BASE_URL}/cashier/menu/enter-queue`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          guestUsername: guestData.guestUsername.trim(),
+          num_people: parseInt(guestData.num_people),
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.msg ||
+            errorData.error ||
+            `HTTP error! status: ${response.status}`
+        );
+      }
+
+      const result = await response.json();
+
+      set({
+        isLoading: false,
+        message: `Successfully added ${guestData.guestUsername} (${
+          guestData.num_people
+        } ${guestData.num_people === 1 ? "person" : "people"}) to the queue!`,
+        error: null,
+      });
+
+      // Clear success message after 5 seconds
+      setTimeout(() => set({ message: "" }), 5000);
+
+      return result;
+    } catch (error) {
+      set({
+        error: error.message,
+        isLoading: false,
+        message: error.message,
+      });
+
+      // Clear error message after 7 seconds
+      setTimeout(() => set({ message: "", error: null }), 7000);
+      throw error;
+    }
+  },
+
   // Cart functionality
   addToCart: (item) => {
     const { cart } = get();

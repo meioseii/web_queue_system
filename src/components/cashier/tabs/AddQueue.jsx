@@ -10,19 +10,18 @@ import {
   Alert,
   Spinner,
 } from "react-bootstrap";
+import useCashierStore from "../../../store/cashier-store";
 import "../../../assets/css/add-queue.css";
 
 const AddQueue = () => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const { addToQueue, isLoading, message, error, clearMessage } =
+    useCashierStore();
 
   const {
     control,
     handleSubmit,
     formState: { errors, isValid },
     reset,
-    watch,
   } = useForm({
     defaultValues: {
       guestUsername: "",
@@ -31,59 +30,18 @@ const AddQueue = () => {
     mode: "onChange",
   });
 
-  const watchedValues = watch();
-
   const onSubmit = async (data) => {
-    setIsSubmitting(true);
-    setError("");
-    setMessage("");
-
     try {
-      const response = await fetch(
-        "http://54.252.152.233/cashier/menu/enter-queue",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({
-            guestUsername: data.guestUsername.trim(),
-            num_people: parseInt(data.num_people),
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          errorData.msg ||
-            errorData.error ||
-            `HTTP error! status: ${response.status}`
-        );
-      }
-
-      const result = await response.json();
-      setMessage(
-        `Successfully added ${data.guestUsername} (${data.num_people} ${
-          data.num_people === "1" ? "person" : "people"
-        }) to the queue!`
-      );
+      await addToQueue(data);
       reset();
-
-      console.log("Queue entry added successfully:", result);
     } catch (error) {
       console.error("Error adding to queue:", error);
-      setError(`Failed to add to queue: ${error.message}`);
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleReset = () => {
     reset();
-    setMessage("");
-    setError("");
+    clearMessage();
   };
 
   return (
@@ -199,7 +157,7 @@ const AddQueue = () => {
                                 className={`form-input ${
                                   errors.guestUsername ? "is-invalid" : ""
                                 }`}
-                                disabled={isSubmitting}
+                                disabled={isLoading}
                               />
                             )}
                           />
@@ -243,11 +201,11 @@ const AddQueue = () => {
                                 type="number"
                                 placeholder="Enter party size"
                                 min="1"
-                                max="20"
+                                max="6"
                                 className={`form-input ${
                                   errors.num_people ? "is-invalid" : ""
                                 }`}
-                                disabled={isSubmitting}
+                                disabled={isLoading}
                               />
                             )}
                           />
@@ -268,7 +226,7 @@ const AddQueue = () => {
                         variant="outline-secondary"
                         className="btn-reset"
                         onClick={handleReset}
-                        disabled={isSubmitting}
+                        disabled={isLoading}
                       >
                         <span className="material-icons btn-icon">refresh</span>
                         <span className="btn-text">Reset</span>
@@ -277,9 +235,9 @@ const AddQueue = () => {
                       <Button
                         type="submit"
                         className="btn-submit"
-                        disabled={isSubmitting || !isValid}
+                        disabled={isLoading || !isValid}
                       >
-                        {isSubmitting ? (
+                        {isLoading ? (
                           <>
                             <Spinner
                               as="span"
