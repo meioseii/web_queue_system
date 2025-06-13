@@ -248,7 +248,9 @@ const Kitchen = () => {
                           }}
                         >
                           {order.takeOut ? (
-                            <span className="takeout-text">Takeout</span>
+                            <span className="takeout-text">
+                              Takeout {order.username}
+                            </span>
                           ) : (
                             <span>Table [{order.tableNumber}]</span>
                           )}

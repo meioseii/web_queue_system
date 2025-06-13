@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Container, Row, Col, Nav, Button } from "react-bootstrap";
 import TablesTab from "./tabs/TablesTab";
 import OrderTab from "./tabs/OrderTab";
+import AddQueue from "./tabs/AddQueue";
 import useCashierStore from "../../store/cashier-store";
 import "../../assets/css/cashier.css";
 
@@ -75,12 +76,7 @@ const CashierDashboard = () => {
         return <TablesTab />;
 
       case "addQueue":
-        return (
-          <div className="content-section">
-            <h3 className="content-title">Add Queue</h3>
-            <p>Add queue form will go here...</p>
-          </div>
-        );
+        return <AddQueue />;
 
       case "order":
         return <OrderTab />;
