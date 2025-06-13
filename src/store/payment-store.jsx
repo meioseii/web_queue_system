@@ -19,13 +19,16 @@ const usePaymentStore = create((set, get) => ({
     set({ isLoading: true, error: null });
 
     try {
-      const response = await fetch("http://54.252.152.233/cashier/menu/unpaid", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await fetch(
+        "http://54.252.152.233/cashier/menu/unpaid",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
 
       if (response.ok) {
         const data = await response.json();
@@ -57,18 +60,21 @@ const usePaymentStore = create((set, get) => ({
     set({ isLoading: true });
 
     try {
-      const response = await fetch("http://54.252.152.233/cashier/menu/payment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          username: username,
-          guest: isGuest,
-          paymentMethod: paymentMethod,
-        }),
-      });
+      const response = await fetch(
+        "http://54.252.152.233/cashier/menu/payment",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            username: username,
+            guest: isGuest,
+            paymentMethod: paymentMethod,
+          }),
+        }
+      );
 
       if (response.ok) {
         const result = await response.json();

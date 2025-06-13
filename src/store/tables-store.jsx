@@ -103,16 +103,19 @@ const useTablesStore = create((set, get) => ({
     set({ isLoading: true });
 
     try {
-      const response = await fetch("http://54.252.152.233/cashier/menu/done-table", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          username: username,
-        }),
-      });
+      const response = await fetch(
+        "http://54.252.152.233/cashier/menu/done-table",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({
+            username: username,
+          }),
+        }
+      );
 
       if (response.ok) {
         const result = await response.json();
@@ -125,9 +128,7 @@ const useTablesStore = create((set, get) => ({
       } else {
         const errorData = await response.json();
         throw new Error(
-          errorData.msg ||
-            errorData.error ||
-            "Failed to checkout customer"
+          errorData.msg || errorData.error || "Failed to checkout customer"
         );
       }
     } catch (error) {

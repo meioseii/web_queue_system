@@ -4,6 +4,7 @@ import TablesTab from "./tabs/TablesTab";
 import OrderTab from "./tabs/OrderTab";
 import AddQueue from "./tabs/AddQueue";
 import Payment from "./tabs/Payment";
+import Reservation from "./tabs/Reservation";
 import useCashierStore from "../../store/cashier-store";
 import "../../assets/css/cashier.css";
 
@@ -65,14 +66,6 @@ const CashierDashboard = () => {
 
   const renderContent = () => {
     switch (activeComponent) {
-      case "queueList":
-        return (
-          <div className="content-section">
-            <h3 className="content-title">Queue List</h3>
-            <p>Queue management content will go here...</p>
-          </div>
-        );
-
       case "tableList":
         return <TablesTab />;
 
@@ -84,6 +77,9 @@ const CashierDashboard = () => {
 
       case "payment":
         return <Payment />;
+
+      case "reservation":
+        return <Reservation />;
 
       default:
         return <TablesTab />;
@@ -125,16 +121,6 @@ const CashierDashboard = () => {
               <Nav className="flex-column sidebar-nav">
                 <Nav.Link
                   className={`sidebar-link ${
-                    activeComponent === "queueList" ? "active" : ""
-                  }`}
-                  onClick={() => setActiveComponent("queueList")}
-                  title="Queue List"
-                >
-                  <span className="sidebar-icon">📋</span>
-                  <span className="sidebar-text">Queue List</span>
-                </Nav.Link>
-                <Nav.Link
-                  className={`sidebar-link ${
                     activeComponent === "tableList" ? "active" : ""
                   }`}
                   onClick={() => setActiveComponent("tableList")}
@@ -172,6 +158,16 @@ const CashierDashboard = () => {
                 >
                   <span className="sidebar-icon">💳</span>
                   <span className="sidebar-text">Payment</span>
+                </Nav.Link>
+                <Nav.Link
+                  className={`sidebar-link ${
+                    activeComponent === "reservation" ? "active" : ""
+                  }`}
+                  onClick={() => setActiveComponent("reservation")}
+                  title="Reservation"
+                >
+                  <span className="sidebar-icon">📅</span>
+                  <span className="sidebar-text">Reservation</span>
                 </Nav.Link>
               </Nav>
             )}
@@ -222,6 +218,15 @@ const CashierDashboard = () => {
                   title="Payment"
                 >
                   <span className="sidebar-icon">💳</span>
+                </Nav.Link>
+                <Nav.Link
+                  className={`sidebar-link ${
+                    activeComponent === "reservation" ? "active" : ""
+                  }`}
+                  onClick={() => setActiveComponent("reservation")}
+                  title="Reservation"
+                >
+                  <span className="sidebar-icon">📅</span>
                 </Nav.Link>
               </Nav>
             )}
