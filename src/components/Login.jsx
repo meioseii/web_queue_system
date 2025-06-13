@@ -36,7 +36,12 @@ function Login() {
         >
           <div className="text-center">
             <div className="brand-logo mb-3">
-              <img src={iQueueImage} alt="iQueue Logo" className="logo-image" />
+              <img
+                src={iQueueImage}
+                alt="iQueue Logo"
+                className="logo-image"
+                style={{ width: "150px", height: "150px" }}
+              />
             </div>
             <h1 className="brand-title">iQUEUE</h1>
             <p className="brand-tagline">Less waiting, more enjoying!</p>
