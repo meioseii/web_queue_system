@@ -228,7 +228,7 @@ const useCashierStore = create((set, get) => ({
       // Clear message after 2 seconds
       setTimeout(() => {
         set({ message: "" });
-      }, 2000);
+      }, 4000);
     }
   },
 

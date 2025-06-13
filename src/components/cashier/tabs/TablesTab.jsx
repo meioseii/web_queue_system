@@ -6,11 +6,14 @@ import {
   Pagination,
   Spinner,
   Alert,
+  Toast,
+  ToastContainer,
 } from "react-bootstrap";
 import useCashierStore from "../../../store/cashier-store";
 
 const TablesTab = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [showToast, setShowToast] = useState(false);
 
   const {
     tables,
@@ -37,6 +40,13 @@ const TablesTab = () => {
 
     return () => clearInterval(interval);
   }, [fetchTables, isConnected]);
+
+  // Show toast when there's a message or error
+  useEffect(() => {
+    if (error || message) {
+      setShowToast(true);
+    }
+  }, [error, message]);
 
   // Transform API data to display format
   const transformTableData = (apiTables) => {
@@ -131,6 +141,11 @@ const TablesTab = () => {
     fetchTables().catch(() => {});
   };
 
+  const handleToastClose = () => {
+    setShowToast(false);
+    clearMessage();
+  };
+
   return (
     <div className="content-section">
       <div className="content-header">
@@ -175,18 +190,6 @@ const TablesTab = () => {
             Connecting to live updates... Tables will refresh automatically once
             connected.
           </small>
-        </Alert>
-      )}
-
-      {/* Error/Message Display */}
-      {(error || message) && (
-        <Alert
-          variant={error ? "danger" : "success"}
-          dismissible
-          onClose={clearMessage}
-          className="mb-3"
-        >
-          {error || message}
         </Alert>
       )}
 
@@ -286,6 +289,31 @@ const TablesTab = () => {
           </>
         )}
       </div>
+
+      {/* Toast Container for messages/errors */}
+      <ToastContainer
+        position="bottom-end"
+        className="p-3"
+        style={{ zIndex: 1050 }}
+      >
+        <Toast
+          show={showToast}
+          onClose={handleToastClose}
+          delay={3500}
+          autohide
+          bg={error ? "danger" : "success"}
+        >
+          <Toast.Header>
+            <strong className="me-auto">{error ? "Error" : "Success"}</strong>
+          </Toast.Header>
+          <Toast.Body
+            className={error ? "text-white" : ""}
+            style={{ color: "#fff" }}
+          >
+            {error || message}
+          </Toast.Body>
+        </Toast>
+      </ToastContainer>
     </div>
   );
 };
