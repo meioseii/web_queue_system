@@ -17,6 +17,7 @@ const TablesTab = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showToast, setShowToast] = useState(false);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
   const [selectedTable, setSelectedTable] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -30,10 +31,8 @@ const TablesTab = () => {
     isConnected,
   } = useCashierStore();
 
-  const {
-    confirmCustomerPresence,
-    markCustomerMissed,
-  } = useTablesStore();
+  const { confirmCustomerPresence, markCustomerMissed, checkoutCustomer } =
+    useTablesStore();
 
   // Fetch tables on component mount
   useEffect(() => {
@@ -144,6 +143,9 @@ const TablesTab = () => {
     if (action === "Confirm/Missing") {
       setSelectedTable(tableData);
       setShowConfirmModal(true);
+    } else if (action === "Checkout") {
+      setSelectedTable(tableData);
+      setShowCheckoutModal(true);
     }
     // Handle other actions here
   };
@@ -162,15 +164,43 @@ const TablesTab = () => {
       } else {
         await markCustomerMissed(selectedTable.name);
       }
-      
+
       // Show success message
       setShowToast(true);
-      
+
       // Refresh tables to get updated status
       fetchTables().catch(() => {});
-      
+
       // Close modal
       setShowConfirmModal(false);
+      setSelectedTable(null);
+    } catch (error) {
+      // Error is already handled in the store
+      setShowToast(true);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleCheckout = async () => {
+    if (!selectedTable || !selectedTable.name) {
+      console.error("No table or username selected");
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      await checkoutCustomer(selectedTable.name);
+
+      // Show success message
+      setShowToast(true);
+
+      // Refresh tables to get updated status
+      fetchTables().catch(() => {});
+
+      // Close modal
+      setShowCheckoutModal(false);
       setSelectedTable(null);
     } catch (error) {
       // Error is already handled in the store
@@ -196,6 +226,7 @@ const TablesTab = () => {
   const handleCloseModal = () => {
     if (!isProcessing) {
       setShowConfirmModal(false);
+      setShowCheckoutModal(false);
       setSelectedTable(null);
     }
   };
@@ -366,7 +397,8 @@ const TablesTab = () => {
             Is <strong>{selectedTable?.name}</strong> missing or present?
           </h5>
           <p className="text-muted mb-0">
-            Table #{selectedTable?.table} - Please confirm the customer's status.
+            Table #{selectedTable?.table} - Please confirm the customer's
+            status.
           </p>
         </Modal.Body>
         <Modal.Footer className="justify-content-center">
@@ -411,6 +443,62 @@ const TablesTab = () => {
               <>
                 <i className="fas fa-user-check me-2"></i>
                 Present
+              </>
+            )}
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Checkout Modal */}
+      <Modal
+        show={showCheckoutModal}
+        onHide={handleCloseModal}
+        centered
+        backdrop={isProcessing ? "static" : true}
+        keyboard={!isProcessing}
+      >
+        <Modal.Header closeButton={!isProcessing}>
+          <Modal.Title>Customer Checkout</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="text-center py-4">
+          <div className="mb-3">
+            <i
+              className="fas fa-receipt text-warning"
+              style={{ fontSize: "3rem" }}
+            ></i>
+          </div>
+          <h5 className="mb-3">
+            Is <strong>{selectedTable?.name}</strong> ready to check out?
+          </h5>
+          <p className="text-muted mb-0">
+            Table #{selectedTable?.table} - Please confirm if the customer is
+            finished dining and ready to leave.
+          </p>
+        </Modal.Body>
+        <Modal.Footer className="justify-content-center">
+          <Button
+            variant="outline-secondary"
+            onClick={handleCloseModal}
+            disabled={isProcessing}
+            className="px-3"
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="warning"
+            onClick={handleCheckout}
+            disabled={isProcessing}
+            className="px-3"
+          >
+            {isProcessing ? (
+              <>
+                <Spinner animation="border" size="sm" className="me-2" />
+                Processing...
+              </>
+            ) : (
+              <>
+                <i className="fas fa-check-circle me-2"></i>
+                Checkout
               </>
             )}
           </Button>
