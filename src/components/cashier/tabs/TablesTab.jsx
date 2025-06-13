@@ -12,8 +12,17 @@ import useCashierStore from "../../../store/cashier-store";
 const TablesTab = () => {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const { tables, isLoading, error, message, fetchTables, clearMessage } =
-    useCashierStore();
+  const {
+    tables,
+    isLoading,
+    error,
+    message,
+    fetchTables,
+    clearMessage,
+    isConnected,
+    connectWebSocket,
+    disconnectWebSocket,
+  } = useCashierStore();
 
   // Fetch tables on component mount
   useEffect(() => {
@@ -55,6 +64,7 @@ const TablesTab = () => {
         status: status,
         action: action,
         originalStatus: table.status,
+        queueingNumber: table.queueingNumber || "",
       };
     });
   };
@@ -102,7 +112,6 @@ const TablesTab = () => {
   const handleAction = (action, table) => {
     console.log(`Action: ${action} for Table ${table}`);
     // Handle different actions here
-    // You can add API calls for checkout, clean, confirm actions
   };
 
   const handlePageChange = (pageNumber) => {
@@ -111,6 +120,10 @@ const TablesTab = () => {
 
   const handleRefresh = () => {
     fetchTables().catch(() => {});
+  };
+
+  const handleWebSocketReconnect = () => {
+    connectWebSocket();
   };
 
   return (
@@ -122,6 +135,18 @@ const TablesTab = () => {
             Page {currentPage} of {totalPages} | Tables {startIndex + 1}-
             {Math.min(startIndex + tablesPerPage, transformedTables.length)}
           </span>
+          {/* WebSocket Status Indicator */}
+          <div className="ws-status-indicator">
+            {isConnected ? (
+              <Badge bg="success" className="me-2">
+                🟢 Live Updates
+              </Badge>
+            ) : (
+              <Badge bg="warning" className="me-2">
+                🟡 Manual Mode
+              </Badge>
+            )}
+          </div>
           <Button
             variant="outline-primary"
             size="sm"
@@ -137,6 +162,25 @@ const TablesTab = () => {
           </Button>
         </div>
       </div>
+
+      {/* WebSocket Error Alert */}
+      {!isConnected && (
+        <Alert variant="warning" className="mb-3">
+          <div className="d-flex justify-content-between align-items-center">
+            <span>
+              <strong>Connection Issue:</strong> Live updates unavailable. Using
+              manual refresh.
+            </span>
+            <Button
+              variant="outline-warning"
+              size="sm"
+              onClick={handleWebSocketReconnect}
+            >
+              Reconnect
+            </Button>
+          </div>
+        </Alert>
+      )}
 
       {/* Error/Message Display */}
       {(error || message) && (
@@ -185,7 +229,14 @@ const TablesTab = () => {
                     if (row) {
                       return (
                         <tr key={`table-${row.table}`}>
-                          <td className="table-number">{row.table}</td>
+                          <td className="table-number">
+                            {row.table}
+                            {row.queueingNumber && (
+                              <small className="text-muted d-block">
+                                Q#{row.queueingNumber}
+                              </small>
+                            )}
+                          </td>
                           <td>{row.name}</td>
                           <td>{row.pax}</td>
                           <td>{getStatusBadge(row.status)}</td>
@@ -212,7 +263,7 @@ const TablesTab = () => {
               </Table>
             </div>
 
-            {/* Pagination - always show if more than 1 page */}
+            {/* Pagination */}
             {totalPages > 1 && (
               <div className="table-pagination">
                 <Pagination className="custom-pagination">

@@ -3,6 +3,7 @@ import { create } from "zustand";
 const BASE_URL = "http://54.252.152.233";
 
 const useCashierStore = create((set, get) => ({
+  // State
   tables: [],
   categories: [],
   menuItems: [],
@@ -17,7 +18,236 @@ const useCashierStore = create((set, get) => ({
   error: null,
   message: "",
 
-  // Fetch all tables
+  // WebSocket related state
+  stompClient: null,
+  isConnected: false,
+
+  // Connect to WebSocket
+  connectWebSocket: () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    if (
+      typeof window.SockJS === "undefined" ||
+      typeof window.Stomp === "undefined"
+    ) {
+      return;
+    }
+
+    try {
+      const socket = new window.SockJS(`${BASE_URL}/queue-websocket`);
+      const stompClient = window.Stomp.over(socket);
+
+      const headers = {
+        Authorization: `Bearer ${token}`,
+      };
+
+      stompClient.connect(
+        headers,
+        (frame) => {
+          set({ isConnected: true, error: null, stompClient });
+
+          try {
+            // Subscribe to seated tables updates
+            stompClient.subscribe("/topic/seated-tables", (message) => {
+              try {
+                const tableData = JSON.parse(message.body);
+                get().handleTableUpdate(tableData);
+              } catch (error) {
+                console.error("Error processing table update:", error);
+                set({
+                  error: "Failed to process table update",
+                  message: "Failed to process table update",
+                });
+              }
+            });
+
+            // Subscribe to dirty table updates (for table cleaning status)
+            stompClient.subscribe("/topic/table/dirty", (message) => {
+              try {
+                const dirtyTableData = JSON.parse(message.body);
+
+                // Handle dirty table update - mark table as DIRTY
+                if (dirtyTableData && dirtyTableData.tableNumber) {
+                  const tableUpdate = {
+                    tableNumber: dirtyTableData.tableNumber,
+                    status: "DIRTY",
+                    action: "Table to clean",
+                  };
+                  get().handleTableUpdate(tableUpdate);
+                }
+              } catch (error) {
+                console.error("Error parsing dirty table message:", error);
+              }
+            });
+
+            // Subscribe to table status updates (for when tables are cleaned)
+            stompClient.subscribe("/topic/table/status", (message) => {
+              try {
+                const statusData = JSON.parse(message.body);
+
+                // Handle table status update (cleaned tables become AVAILABLE)
+                if (statusData && statusData.tableNumber) {
+                  const tableUpdate = {
+                    tableNumber: statusData.tableNumber,
+                    status: statusData.status || "AVAILABLE",
+                    username: statusData.cleaned ? "" : statusData.username,
+                    queueingNumber: statusData.cleaned
+                      ? ""
+                      : statusData.queueingNumber,
+                  };
+                  get().handleTableUpdate(tableUpdate);
+                }
+              } catch (error) {
+                console.error("Error parsing table status message:", error);
+              }
+            });
+
+            // Subscribe to general table updates
+            stompClient.subscribe("/topic/table/updates", (message) => {
+              try {
+                const updateData = JSON.parse(message.body);
+                get().handleTableUpdate(updateData);
+              } catch (error) {
+                console.error("Error parsing table updates message:", error);
+              }
+            });
+
+            // Set success message
+            set({
+              message: "Connected to live table updates",
+              error: null,
+            });
+            setTimeout(() => set({ message: "" }), 3000);
+          } catch (error) {
+            console.error("Subscription error:", error);
+            set({
+              error: "Failed to subscribe to table updates",
+              message: "Failed to subscribe to table updates",
+            });
+          }
+        },
+        (error) => {
+          console.error("WebSocket connection error:", error);
+          set({
+            isConnected: false,
+            error: `WebSocket Error: ${error.message || "Connection failed"}`,
+            message: `WebSocket Error: ${error.message || "Connection failed"}`,
+          });
+
+          // Auto-reconnect after 5 seconds
+          setTimeout(() => {
+            get().connectWebSocket();
+          }, 5000);
+        }
+      );
+
+      set({ stompClient });
+    } catch (error) {
+      console.error("WebSocket setup error:", error);
+      set({
+        error: `Setup Error: ${error.message}`,
+        message: `Setup Error: ${error.message}`,
+      });
+    }
+  },
+
+  // Disconnect from WebSocket
+  disconnectWebSocket: () => {
+    const { stompClient } = get();
+    if (stompClient && stompClient.connected) {
+      stompClient.disconnect(() => {
+        set({ isConnected: false, stompClient: null });
+      });
+    } else {
+      set({ isConnected: false, stompClient: null });
+    }
+  },
+
+  // Handle table updates from WebSocket
+  handleTableUpdate: (tableData) => {
+    const { tables } = get();
+
+    // Handle single table update or array of tables
+    const updateData = Array.isArray(tableData) ? tableData : [tableData];
+
+    let updatedTables = [...tables];
+    let hasUpdates = false;
+
+    updateData.forEach((update) => {
+      const tableNumber = update.tableNumber || update.table_number;
+
+      if (!tableNumber) {
+        return;
+      }
+
+      const existingIndex = updatedTables.findIndex((table) => {
+        return (
+          table.tableNumber == tableNumber || table.table_number == tableNumber
+        );
+      });
+
+      if (existingIndex >= 0) {
+        // Determine the new status based on the update
+        let newStatus = update.status || updatedTables[existingIndex].status;
+
+        // Handle special cases
+        if (update.action === "Table to clean" || update.status === "DIRTY") {
+          newStatus = "DIRTY";
+        } else if (update.cleaned === true || update.status === "AVAILABLE") {
+          newStatus = "AVAILABLE";
+        }
+
+        // Update existing table
+        updatedTables[existingIndex] = {
+          ...updatedTables[existingIndex],
+          ...update,
+          // Ensure consistent property names
+          tableNumber: tableNumber,
+          status: newStatus,
+          username: update.cleaned
+            ? ""
+            : update.customerName ||
+              update.username ||
+              updatedTables[existingIndex].username,
+          queueingNumber: update.cleaned
+            ? ""
+            : update.queueingNumber ||
+              updatedTables[existingIndex].queueingNumber,
+          size: update.size || updatedTables[existingIndex].size,
+        };
+
+        hasUpdates = true;
+      } else {
+        // Add new table if it doesn't exist
+        const newTable = {
+          tableNumber: tableNumber,
+          status: update.status || "AVAILABLE",
+          username: update.customerName || update.username || "",
+          queueingNumber: update.queueingNumber || "",
+          size: update.size || "",
+          ...update,
+        };
+
+        updatedTables.push(newTable);
+        hasUpdates = true;
+      }
+    });
+
+    if (hasUpdates) {
+      set({
+        tables: updatedTables,
+        message: `Table updates received`,
+      });
+
+      // Clear message after 2 seconds
+      setTimeout(() => {
+        set({ message: "" });
+      }, 2000);
+    }
+  },
+
+  // Fetch all tables (initial retrieve only)
   fetchTables: async () => {
     set({ isLoading: true, error: null });
 
@@ -37,6 +267,12 @@ const useCashierStore = create((set, get) => ({
           isLoading: false,
           error: null,
         });
+
+        // Connect to WebSocket after successful table fetch
+        if (!get().isConnected) {
+          get().connectWebSocket();
+        }
+
         return tablesData;
       } else {
         const errorData = await response.json();
@@ -203,6 +439,10 @@ const useCashierStore = create((set, get) => ({
 
   // Reset store
   reset: () => {
+    const { stompClient } = get();
+    if (stompClient && stompClient.connected) {
+      stompClient.disconnect();
+    }
     set({
       tables: [],
       categories: [],
@@ -217,6 +457,8 @@ const useCashierStore = create((set, get) => ({
       isLoading: false,
       error: null,
       message: "",
+      stompClient: null,
+      isConnected: false,
     });
   },
 }));
