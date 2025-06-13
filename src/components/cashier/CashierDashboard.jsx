@@ -1,12 +1,61 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Container, Row, Col, Nav, Button } from "react-bootstrap";
 import TablesTab from "./tabs/TablesTab";
 import OrderTab from "./tabs/OrderTab";
+import useCashierStore from "../../store/cashier-store";
 import "../../assets/css/cashier.css";
 
 const CashierDashboard = () => {
   const [activeComponent, setActiveComponent] = useState("tableList");
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const wsInitialized = useRef(false);
+
+  const { connectWebSocket, disconnectWebSocket } = useCashierStore();
+
+  // Initialize WebSocket only once when dashboard mounts
+  useEffect(() => {
+    if (wsInitialized.current) return;
+
+    const loadWebSocketScripts = () => {
+      if (!window.SockJS) {
+        const sockjsScript = document.createElement("script");
+        sockjsScript.src =
+          "https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js";
+        sockjsScript.onload = () => {
+          if (!window.Stomp) {
+            const stompScript = document.createElement("script");
+            stompScript.src =
+              "https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js";
+            stompScript.onload = () => {
+              setTimeout(connectWebSocket, 1000);
+            };
+            document.head.appendChild(stompScript);
+          } else {
+            setTimeout(connectWebSocket, 1000);
+          }
+        };
+        document.head.appendChild(sockjsScript);
+      } else if (!window.Stomp) {
+        const stompScript = document.createElement("script");
+        stompScript.src =
+          "https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js";
+        stompScript.onload = () => {
+          setTimeout(connectWebSocket, 1000);
+        };
+        document.head.appendChild(stompScript);
+      } else {
+        setTimeout(connectWebSocket, 1000);
+      }
+    };
+
+    loadWebSocketScripts();
+    wsInitialized.current = true;
+
+    // Cleanup when dashboard unmounts
+    return () => {
+      disconnectWebSocket();
+    };
+  }, [connectWebSocket, disconnectWebSocket]);
 
   const toggleSidebar = () => {
     setSidebarCollapsed(!sidebarCollapsed);

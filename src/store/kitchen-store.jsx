@@ -40,92 +40,86 @@ const useKitchenStore = create((set, get) => ({
 
           try {
             // Subscribe to order updates
-            stompClient.subscribe(
-              "/topic/table/orders",
-              (message) => {
-                try {
-                  const orderData = JSON.parse(message.body);
-                  const processedOrders = processOrdersData(orderData);
+            stompClient.subscribe("/topic/table/orders", (message) => {
+              try {
+                const orderData = JSON.parse(message.body);
+                const processedOrders = processOrdersData(orderData);
 
-                  if (processedOrders.length > 0) {
-                    const { orders: currentOrders } = get();
-                    const updatedOrders = [...currentOrders];
+                if (processedOrders.length > 0) {
+                  const { orders: currentOrders } = get();
+                  const updatedOrders = [...currentOrders];
 
-                    processedOrders.forEach((newOrder) => {
-                      const existingIndex = updatedOrders.findIndex(
-                        (order) => order.id === newOrder.id
-                      );
+                  processedOrders.forEach((newOrder) => {
+                    const existingIndex = updatedOrders.findIndex(
+                      (order) => order.id === newOrder.id
+                    );
 
-                      if (existingIndex >= 0) {
-                        updatedOrders[existingIndex] = newOrder;
-                      } else {
-                        updatedOrders.push(newOrder);
-                      }
-                    });
+                    if (existingIndex >= 0) {
+                      updatedOrders[existingIndex] = newOrder;
+                    } else {
+                      updatedOrders.push(newOrder);
+                    }
+                  });
+
+                  set({
+                    orders: updatedOrders,
+                    isLoadingOrders: false,
+                    error: null,
+                  });
+                }
+              } catch {
+                set({
+                  error: "Failed to process order update",
+                  message: "Failed to process order update",
+                });
+              }
+            });
+
+            // Subscribe to dirty table updates
+            stompClient.subscribe("/topic/table/dirty", (message) => {
+              try {
+                const dirtyTableData = JSON.parse(message.body);
+
+                if (dirtyTableData && typeof dirtyTableData === "object") {
+                  if (dirtyTableData.tableNumber) {
+                    const { dirtyTables: currentTables } = get();
+
+                    const newDirtyTable = {
+                      tableId: `table_${dirtyTableData.tableNumber}`,
+                      table_number: dirtyTableData.tableNumber,
+                      tableNumber: dirtyTableData.tableNumber,
+                    };
+
+                    const existingIndex = currentTables.findIndex(
+                      (table) =>
+                        table.table_number === dirtyTableData.tableNumber ||
+                        table.tableNumber === dirtyTableData.tableNumber
+                    );
+
+                    let updatedDirtyTables;
+                    if (existingIndex >= 0) {
+                      updatedDirtyTables = [...currentTables];
+                      updatedDirtyTables[existingIndex] = {
+                        ...updatedDirtyTables[existingIndex],
+                        ...newDirtyTable,
+                      };
+                    } else {
+                      updatedDirtyTables = [...currentTables, newDirtyTable];
+                    }
 
                     set({
-                      orders: updatedOrders,
-                      isLoadingOrders: false,
+                      dirtyTables: updatedDirtyTables,
                       error: null,
                     });
                   }
-                } catch {
-                  set({
-                    error: "Failed to process order update",
-                    message: "Failed to process order update",
-                  });
                 }
+              } catch {
+                set({
+                  error: "Failed to process dirty table update",
+                  message: "Failed to process dirty table update",
+                });
               }
-            );
-
-            // Subscribe to dirty table updates
-            stompClient.subscribe(
-              "/topic/table/dirty",
-              (message) => {
-                try {
-                  const dirtyTableData = JSON.parse(message.body);
-
-                  if (dirtyTableData && typeof dirtyTableData === "object") {
-                    if (dirtyTableData.tableNumber) {
-                      const { dirtyTables: currentTables } = get();
-
-                      const newDirtyTable = {
-                        tableId: `table_${dirtyTableData.tableNumber}`,
-                        table_number: dirtyTableData.tableNumber,
-                        tableNumber: dirtyTableData.tableNumber,
-                      };
-
-                      const existingIndex = currentTables.findIndex(
-                        (table) =>
-                          table.table_number === dirtyTableData.tableNumber ||
-                          table.tableNumber === dirtyTableData.tableNumber
-                      );
-
-                      let updatedDirtyTables;
-                      if (existingIndex >= 0) {
-                        updatedDirtyTables = [...currentTables];
-                        updatedDirtyTables[existingIndex] = {
-                          ...updatedDirtyTables[existingIndex],
-                          ...newDirtyTable,
-                        };
-                      } else {
-                        updatedDirtyTables = [...currentTables, newDirtyTable];
-                      }
-
-                      set({
-                        dirtyTables: updatedDirtyTables,
-                        error: null,
-                      });
-                    }
-                  }
-                } catch {
-                  set({
-                    error: "Failed to process dirty table update",
-                    message: "Failed to process dirty table update",
-                  });
-                }
-              }
-            );
+            });
           } catch {
             set({
               error: "Failed to subscribe to updates",

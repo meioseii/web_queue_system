@@ -31,6 +31,7 @@ const OrderTab = () => {
     updateOrderDetails,
     getCartTotal,
     clearMessage,
+    submitOrder,
   } = useCashierStore();
 
   // Fetch categories on component mount
@@ -69,35 +70,19 @@ const OrderTab = () => {
   };
 
   const handleTakeoutChange = (checked) => {
+    console.log("Takeout option changed:", checked);
     updateOrderDetails({
       isTakeout: checked,
-      tableNumber: checked ? "" : orderDetails.tableNumber,
     });
   };
 
-  const handleProceedToCheckout = () => {
-    // Validate form
-    if (!orderDetails.name.trim()) {
-      alert("Please enter a name");
-      return;
+  const handleProceedToCheckout = async () => {
+    try {
+      await submitOrder();
+    } catch (error) {
+      // Error is already handled in the store
+      console.error("Order submission failed:", error);
     }
-
-    if (!orderDetails.isTakeout && !orderDetails.tableNumber.trim()) {
-      alert("Please enter a table number");
-      return;
-    }
-
-    if (cart.length === 0) {
-      alert("Please add items to your order");
-      return;
-    }
-
-    // Proceed with checkout logic
-    console.log("Proceeding to checkout with:", {
-      orderDetails,
-      cart,
-      total: getCartTotal(),
-    });
   };
 
   const formatCategoryName = (category) => {
@@ -323,20 +308,6 @@ const OrderTab = () => {
                       onChange={(e) => handleTakeoutChange(e.target.checked)}
                     />
                   </Form.Group>
-
-                  {!orderDetails.isTakeout && (
-                    <Form.Group className="mb-3">
-                      <Form.Label>Table Number</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Enter table number"
-                        value={orderDetails.tableNumber}
-                        onChange={(e) =>
-                          handleInputChange("tableNumber", e.target.value)
-                        }
-                      />
-                    </Form.Group>
-                  )}
                 </Form>
               </div>
 
@@ -349,9 +320,23 @@ const OrderTab = () => {
                   size="lg"
                   className="proceed-btn"
                   onClick={handleProceedToCheckout}
-                  disabled={cart.length === 0}
+                  disabled={cart.length === 0 || isLoading}
                 >
-                  Proceed to Payment
+                  {isLoading ? (
+                    <>
+                      <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                        className="me-2"
+                      />
+                      Processing...
+                    </>
+                  ) : (
+                    "Proceed to Payment"
+                  )}
                 </Button>
               </div>
             </div>

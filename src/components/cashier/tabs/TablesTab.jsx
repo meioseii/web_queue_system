@@ -20,14 +20,23 @@ const TablesTab = () => {
     fetchTables,
     clearMessage,
     isConnected,
-    connectWebSocket,
-    disconnectWebSocket,
   } = useCashierStore();
 
   // Fetch tables on component mount
   useEffect(() => {
     fetchTables().catch(() => {});
   }, [fetchTables]);
+
+  // Periodic fetch only when not connected (fallback)
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (!isConnected) {
+        fetchTables().catch(() => {});
+      }
+    }, 30000); // 30 seconds
+
+    return () => clearInterval(interval);
+  }, [fetchTables, isConnected]);
 
   // Transform API data to display format
   const transformTableData = (apiTables) => {
@@ -122,10 +131,6 @@ const TablesTab = () => {
     fetchTables().catch(() => {});
   };
 
-  const handleWebSocketReconnect = () => {
-    connectWebSocket();
-  };
-
   return (
     <div className="content-section">
       <div className="content-header">
@@ -163,22 +168,13 @@ const TablesTab = () => {
         </div>
       </div>
 
-      {/* WebSocket Error Alert */}
+      {/* WebSocket connection status alert */}
       {!isConnected && (
         <Alert variant="warning" className="mb-3">
-          <div className="d-flex justify-content-between align-items-center">
-            <span>
-              <strong>Connection Issue:</strong> Live updates unavailable. Using
-              manual refresh.
-            </span>
-            <Button
-              variant="outline-warning"
-              size="sm"
-              onClick={handleWebSocketReconnect}
-            >
-              Reconnect
-            </Button>
-          </div>
+          <small>
+            Connecting to live updates... Tables will refresh automatically once
+            connected.
+          </small>
         </Alert>
       )}
 

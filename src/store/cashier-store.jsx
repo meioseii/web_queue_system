@@ -11,7 +11,6 @@ const useCashierStore = create((set, get) => ({
   cart: [],
   orderDetails: {
     name: "",
-    tableNumber: "",
     isTakeout: false,
   },
   isLoading: false,
@@ -54,7 +53,6 @@ const useCashierStore = create((set, get) => ({
                 const tableData = JSON.parse(message.body);
                 get().handleTableUpdate(tableData);
               } catch (error) {
-                console.error("Error processing table update:", error);
                 set({
                   error: "Failed to process table update",
                   message: "Failed to process table update",
@@ -77,7 +75,10 @@ const useCashierStore = create((set, get) => ({
                   get().handleTableUpdate(tableUpdate);
                 }
               } catch (error) {
-                console.error("Error parsing dirty table message:", error);
+                set({
+                  error: "Failed to process dirty table update",
+                  message: "Failed to process dirty table update",
+                });
               }
             });
 
@@ -99,52 +100,36 @@ const useCashierStore = create((set, get) => ({
                   get().handleTableUpdate(tableUpdate);
                 }
               } catch (error) {
-                console.error("Error parsing table status message:", error);
+                set({
+                  error: "Failed to process table status update",
+                  message: "Failed to process table status update",
+                });
               }
             });
 
-            // Subscribe to general table updates
-            stompClient.subscribe("/topic/table/updates", (message) => {
-              try {
-                const updateData = JSON.parse(message.body);
-                get().handleTableUpdate(updateData);
-              } catch (error) {
-                console.error("Error parsing table updates message:", error);
-              }
-            });
-
-            // Set success message
             set({
               message: "Connected to live table updates",
               error: null,
             });
             setTimeout(() => set({ message: "" }), 3000);
           } catch (error) {
-            console.error("Subscription error:", error);
             set({
-              error: "Failed to subscribe to table updates",
-              message: "Failed to subscribe to table updates",
+              error: "Failed to subscribe to updates",
+              message: "Failed to subscribe to updates",
             });
           }
         },
         (error) => {
-          console.error("WebSocket connection error:", error);
           set({
             isConnected: false,
             error: `WebSocket Error: ${error.message || "Connection failed"}`,
             message: `WebSocket Error: ${error.message || "Connection failed"}`,
           });
-
-          // Auto-reconnect after 5 seconds
-          setTimeout(() => {
-            get().connectWebSocket();
-          }, 5000);
         }
       );
 
       set({ stompClient });
     } catch (error) {
-      console.error("WebSocket setup error:", error);
       set({
         error: `Setup Error: ${error.message}`,
         message: `Setup Error: ${error.message}`,
@@ -451,7 +436,6 @@ const useCashierStore = create((set, get) => ({
       cart: [],
       orderDetails: {
         name: "",
-        tableNumber: "",
         isTakeout: false,
       },
       isLoading: false,
@@ -460,6 +444,82 @@ const useCashierStore = create((set, get) => ({
       stompClient: null,
       isConnected: false,
     });
+  },
+
+  // Submit order to API
+  submitOrder: async () => {
+    const { cart, orderDetails } = get();
+
+    // Validate form
+    if (!orderDetails.name.trim()) {
+      throw new Error("Please enter a name");
+    }
+
+    if (cart.length === 0) {
+      throw new Error("Please add items to your order");
+    }
+
+    set({ isLoading: true, error: null });
+
+    try {
+      // Prepare order data - exact structure as specified
+      const orderData = {
+        username: orderDetails.name.trim(),
+        takeOut: orderDetails.isTakeout,
+        orders: cart.map((item) => ({
+          product_id: item.menu_id,
+          quantity: item.quantity,
+        })),
+      };
+
+      // Send order to API
+      const response = await fetch(`${BASE_URL}/cashier/menu/add-order`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(orderData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.msg ||
+            errorData.error ||
+            `HTTP error! status: ${response.status}`
+        );
+      }
+
+      const result = await response.json();
+
+      // Success - clear cart and reset form
+      set({
+        cart: [],
+        orderDetails: {
+          name: "",
+          isTakeout: false,
+        },
+        isLoading: false,
+        message: "Order successfully added to the queue!",
+        error: null,
+      });
+
+      // Clear success message after 3 seconds
+      setTimeout(() => set({ message: "" }), 3000);
+
+      return result;
+    } catch (error) {
+      set({
+        error: error.message,
+        isLoading: false,
+        message: error.message,
+      });
+
+      // Clear error message after 5 seconds
+      setTimeout(() => set({ message: "", error: null }), 5000);
+      throw error;
+    }
   },
 }));
 
