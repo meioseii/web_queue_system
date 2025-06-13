@@ -101,8 +101,6 @@ const Kitchen = () => {
   }, [fetchOrders, fetchDirtyTables, isConnected]);
 
   const handleServed = async (orderId, tableNumber) => {
-    setServingOrderId(orderId);
-
     try {
       await markOrderServed(orderId, tableNumber);
       setToastMessage(

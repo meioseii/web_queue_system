@@ -197,7 +197,7 @@ const useKitchenStore = create((set, get) => ({
     set({ isLoading: true, error: null });
 
     try {
-      const response = await fetch(`${BASE_URL}/kitchen/dirty-tables`, {
+      const response = await fetch(`${BASE_URL}/table/dirty`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -236,13 +236,12 @@ const useKitchenStore = create((set, get) => ({
     set({ isLoading: true, error: null });
 
     try {
-      const response = await fetch(`${BASE_URL}/kitchen/clean-table`, {
+      const response = await fetch(`${BASE_URL}/table/cleaned/${tableNumber}`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ tableNumber }),
       });
 
       if (response.ok) {
@@ -290,7 +289,7 @@ const useKitchenStore = create((set, get) => ({
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({ orderId, tableNumber }),
+        body: JSON.stringify({ id: orderId }),
       });
 
       if (response.ok) {
