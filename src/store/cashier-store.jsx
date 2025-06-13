@@ -393,7 +393,7 @@ const useCashierStore = create((set, get) => ({
       });
 
       // Clear success message after 5 seconds
-      setTimeout(() => set({ message: "" }), 5000);
+      setTimeout(() => set({ message: "" }), 3000);
 
       return result;
     } catch (error) {

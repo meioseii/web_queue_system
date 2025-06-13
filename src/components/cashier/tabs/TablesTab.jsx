@@ -8,12 +8,17 @@ import {
   Alert,
   Toast,
   ToastContainer,
+  Modal,
 } from "react-bootstrap";
 import useCashierStore from "../../../store/cashier-store";
+import useTablesStore from "../../../store/tables-store";
 
 const TablesTab = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [showToast, setShowToast] = useState(false);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [selectedTable, setSelectedTable] = useState(null);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   const {
     tables,
@@ -24,6 +29,11 @@ const TablesTab = () => {
     clearMessage,
     isConnected,
   } = useCashierStore();
+
+  const {
+    confirmCustomerPresence,
+    markCustomerMissed,
+  } = useTablesStore();
 
   // Fetch tables on component mount
   useEffect(() => {
@@ -109,7 +119,7 @@ const TablesTab = () => {
     return <Badge bg={variant}>{status}</Badge>;
   };
 
-  const getActionButton = (action, table) => {
+  const getActionButton = (action, tableData) => {
     if (!action) return "";
 
     let variant = "outline-primary";
@@ -121,16 +131,53 @@ const TablesTab = () => {
       <Button
         variant={variant}
         size="sm"
-        onClick={() => handleAction(action, table)}
+        onClick={() => handleAction(action, tableData)}
       >
         {action}
       </Button>
     );
   };
 
-  const handleAction = (action, table) => {
-    console.log(`Action: ${action} for Table ${table}`);
-    // Handle different actions here
+  const handleAction = (action, tableData) => {
+    console.log(`Action: ${action} for Table ${tableData.table}`);
+
+    if (action === "Confirm/Missing") {
+      setSelectedTable(tableData);
+      setShowConfirmModal(true);
+    }
+    // Handle other actions here
+  };
+
+  const handleConfirmPresence = async (isPresent) => {
+    if (!selectedTable || !selectedTable.name) {
+      console.error("No table or username selected");
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      if (isPresent) {
+        await confirmCustomerPresence(selectedTable.name);
+      } else {
+        await markCustomerMissed(selectedTable.name);
+      }
+      
+      // Show success message
+      setShowToast(true);
+      
+      // Refresh tables to get updated status
+      fetchTables().catch(() => {});
+      
+      // Close modal
+      setShowConfirmModal(false);
+      setSelectedTable(null);
+    } catch (error) {
+      // Error is already handled in the store
+      setShowToast(true);
+    } finally {
+      setIsProcessing(false);
+    }
   };
 
   const handlePageChange = (pageNumber) => {
@@ -144,6 +191,13 @@ const TablesTab = () => {
   const handleToastClose = () => {
     setShowToast(false);
     clearMessage();
+  };
+
+  const handleCloseModal = () => {
+    if (!isProcessing) {
+      setShowConfirmModal(false);
+      setSelectedTable(null);
+    }
   };
 
   return (
@@ -239,7 +293,7 @@ const TablesTab = () => {
                           <td>{row.name}</td>
                           <td>{row.pax}</td>
                           <td>{getStatusBadge(row.status)}</td>
-                          <td>{getActionButton(row.action, row.table)}</td>
+                          <td>{getActionButton(row.action, row)}</td>
                         </tr>
                       );
                     } else {
@@ -289,6 +343,79 @@ const TablesTab = () => {
           </>
         )}
       </div>
+
+      {/* Confirm/Missing Modal */}
+      <Modal
+        show={showConfirmModal}
+        onHide={handleCloseModal}
+        centered
+        backdrop={isProcessing ? "static" : true}
+        keyboard={!isProcessing}
+      >
+        <Modal.Header closeButton={!isProcessing}>
+          <Modal.Title>Customer Status Check</Modal.Title>
+        </Modal.Header>
+        <Modal.Body className="text-center py-4">
+          <div className="mb-3">
+            <i
+              className="fas fa-user-check text-info"
+              style={{ fontSize: "3rem" }}
+            ></i>
+          </div>
+          <h5 className="mb-3">
+            Is <strong>{selectedTable?.name}</strong> missing or present?
+          </h5>
+          <p className="text-muted mb-0">
+            Table #{selectedTable?.table} - Please confirm the customer's status.
+          </p>
+        </Modal.Body>
+        <Modal.Footer className="justify-content-center">
+          <Button
+            variant="outline-secondary"
+            onClick={handleCloseModal}
+            disabled={isProcessing}
+            className="px-3"
+          >
+            Cancel
+          </Button>
+          <Button
+            variant="danger"
+            onClick={() => handleConfirmPresence(false)}
+            disabled={isProcessing}
+            className="px-3"
+          >
+            {isProcessing ? (
+              <>
+                <Spinner animation="border" size="sm" className="me-2" />
+                Processing...
+              </>
+            ) : (
+              <>
+                <i className="fas fa-user-times me-2"></i>
+                Missing
+              </>
+            )}
+          </Button>
+          <Button
+            variant="success"
+            onClick={() => handleConfirmPresence(true)}
+            disabled={isProcessing}
+            className="px-3"
+          >
+            {isProcessing ? (
+              <>
+                <Spinner animation="border" size="sm" className="me-2" />
+                Processing...
+              </>
+            ) : (
+              <>
+                <i className="fas fa-user-check me-2"></i>
+                Present
+              </>
+            )}
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
       {/* Toast Container for messages/errors */}
       <ToastContainer
