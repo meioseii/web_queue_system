@@ -30,7 +30,7 @@ const Kitchen = () => {
     message,
     isConnected,
     fetchOrders,
-    fetchDirtyTables, // Add this
+    fetchDirtyTables,
     cleanTable,
     markOrderServed,
     clearMessage,
@@ -82,7 +82,7 @@ const Kitchen = () => {
   useEffect(() => {
     Promise.all([
       fetchOrders().catch(() => {}),
-      fetchDirtyTables().catch(() => {}), // Add this
+      fetchDirtyTables().catch(() => {}),
     ]);
   }, [fetchOrders, fetchDirtyTables]);
 
@@ -92,7 +92,7 @@ const Kitchen = () => {
       if (!isConnected) {
         Promise.all([
           fetchOrders().catch(() => {}),
-          fetchDirtyTables().catch(() => {}), // Add this
+          fetchDirtyTables().catch(() => {}),
         ]);
       }
     }, 30000);
@@ -106,13 +106,17 @@ const Kitchen = () => {
     try {
       await markOrderServed(orderId, tableNumber);
       setToastMessage(
-        `Order for Table #${tableNumber} has been served successfully! ✅`
+        `Order for ${
+          tableNumber === 0 ? "Takeout" : `Table #${tableNumber}`
+        } has been served successfully! ✅`
       );
       setToastVariant("success");
       setShowToast(true);
     } catch (error) {
       setToastMessage(
-        `Failed to serve order for Table #${tableNumber}. Please try again.`
+        `Failed to serve order for ${
+          tableNumber === 0 ? "Takeout" : `Table #${tableNumber}`
+        }. Please try again.`
       );
       setToastVariant("danger");
       setShowToast(true);
@@ -162,6 +166,8 @@ const Kitchen = () => {
     ]);
   };
 
+  console.log("Orders from store:", orders);
+
   return (
     <>
       <Container fluid className="kitchen-wrapper p-0">
@@ -187,7 +193,7 @@ const Kitchen = () => {
                   variant="outline-primary"
                   size="sm"
                   onClick={handleRefreshTables}
-                  disabled={isLoadingOrders || isLoading} // Update to check both loading states
+                  disabled={isLoadingOrders || isLoading}
                   className="refresh-orders-btn"
                 >
                   {isLoadingOrders || isLoading ? (
@@ -235,13 +241,14 @@ const Kitchen = () => {
                       <Card className="order-card">
                         <Card.Header
                           className={`order-header text-center ${
-                            order.type === "takeout" ? "takeout" : "table"
+                            order.takeOut ? "takeout" : "table"
                           }`}
+                          style={{
+                            color: order.takeOut ? "#002BFF" : "inherit",
+                          }}
                         >
-                          {order.type === "takeout" ? (
-                            <span className="takeout-text">
-                              Takeout [{order.tableNumber}]
-                            </span>
+                          {order.takeOut ? (
+                            <span className="takeout-text">Takeout</span>
                           ) : (
                             <span>Table [{order.tableNumber}]</span>
                           )}
@@ -255,7 +262,7 @@ const Kitchen = () => {
                               </div>
                             </div>
                             <div className="order-items-list">
-                              {order.items.map((item, index) => (
+                              {order.orders.map((item, index) => (
                                 <div key={index} className="order-row d-flex">
                                   <div className="order-name-col">
                                     [{item.name}]

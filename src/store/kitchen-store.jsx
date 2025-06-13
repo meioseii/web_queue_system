@@ -39,88 +39,83 @@ const useKitchenStore = create((set, get) => ({
           set({ isConnected: true, error: null, stompClient });
 
           try {
-            // Subscribe to order updates
-            stompClient.subscribe("/topic/table/orders", (message) => {
+            // Subscribe to kitchen orders updates
+            stompClient.subscribe("/topic/kitchen/orders", (message) => {
               try {
-                const orderData = JSON.parse(message.body);
-                const processedOrders = processOrdersData(orderData);
-
-                if (processedOrders.length > 0) {
-                  const { orders: currentOrders } = get();
-                  const updatedOrders = [...currentOrders];
-
-                  processedOrders.forEach((newOrder) => {
-                    const existingIndex = updatedOrders.findIndex(
-                      (order) => order.id === newOrder.id
-                    );
-
-                    if (existingIndex >= 0) {
-                      updatedOrders[existingIndex] = newOrder;
-                    } else {
-                      updatedOrders.push(newOrder);
-                    }
-                  });
-
-                  set({
-                    orders: updatedOrders,
-                    isLoadingOrders: false,
-                    error: null,
-                  });
-                }
-              } catch {
+                const ordersData = JSON.parse(message.body);
+                // Directly use the orders data without processing
+                set({ orders: ordersData });
+              } catch (error) {
                 set({
-                  error: "Failed to process order update",
-                  message: "Failed to process order update",
+                  error: "Failed to process orders update",
+                  message: "Failed to process orders update",
                 });
               }
             });
 
-            // Subscribe to dirty table updates
+            // Subscribe to dirty tables updates
             stompClient.subscribe("/topic/table/dirty", (message) => {
               try {
                 const dirtyTableData = JSON.parse(message.body);
+                const { dirtyTables } = get();
 
-                if (dirtyTableData && typeof dirtyTableData === "object") {
-                  if (dirtyTableData.tableNumber) {
-                    const { dirtyTables: currentTables } = get();
+                // Handle single table or array of tables
+                const newDirtyTables = Array.isArray(dirtyTableData)
+                  ? dirtyTableData
+                  : [dirtyTableData];
 
-                    const newDirtyTable = {
-                      tableId: `table_${dirtyTableData.tableNumber}`,
-                      table_number: dirtyTableData.tableNumber,
-                      tableNumber: dirtyTableData.tableNumber,
-                    };
-
-                    const existingIndex = currentTables.findIndex(
-                      (table) =>
-                        table.table_number === dirtyTableData.tableNumber ||
-                        table.tableNumber === dirtyTableData.tableNumber
-                    );
-
-                    let updatedDirtyTables;
-                    if (existingIndex >= 0) {
-                      updatedDirtyTables = [...currentTables];
-                      updatedDirtyTables[existingIndex] = {
-                        ...updatedDirtyTables[existingIndex],
-                        ...newDirtyTable,
-                      };
-                    } else {
-                      updatedDirtyTables = [...currentTables, newDirtyTable];
-                    }
-
-                    set({
-                      dirtyTables: updatedDirtyTables,
-                      error: null,
-                    });
+                // Add new dirty tables, avoiding duplicates
+                const updatedDirtyTables = [...dirtyTables];
+                newDirtyTables.forEach((newTable) => {
+                  const exists = updatedDirtyTables.some(
+                    (table) =>
+                      (table.table_number || table.tableNumber) ===
+                      (newTable.table_number || newTable.tableNumber)
+                  );
+                  if (!exists) {
+                    updatedDirtyTables.push(newTable);
                   }
-                }
-              } catch {
+                });
+
+                set({ dirtyTables: updatedDirtyTables });
+              } catch (error) {
                 set({
                   error: "Failed to process dirty table update",
                   message: "Failed to process dirty table update",
                 });
               }
             });
-          } catch {
+
+            // Subscribe to table status updates (for when tables are cleaned)
+            stompClient.subscribe("/topic/table/status", (message) => {
+              try {
+                const statusData = JSON.parse(message.body);
+                const { dirtyTables } = get();
+
+                // Remove cleaned tables from dirty tables list
+                if (statusData.status === "AVAILABLE" || statusData.cleaned) {
+                  const tableNumber =
+                    statusData.table_number || statusData.tableNumber;
+                  const updatedDirtyTables = dirtyTables.filter(
+                    (table) =>
+                      (table.table_number || table.tableNumber) !== tableNumber
+                  );
+                  set({ dirtyTables: updatedDirtyTables });
+                }
+              } catch (error) {
+                set({
+                  error: "Failed to process table status update",
+                  message: "Failed to process table status update",
+                });
+              }
+            });
+
+            set({
+              message: "Connected to live kitchen updates",
+              error: null,
+            });
+            setTimeout(() => set({ message: "" }), 3000);
+          } catch (error) {
             set({
               error: "Failed to subscribe to updates",
               message: "Failed to subscribe to updates",
@@ -172,14 +167,13 @@ const useKitchenStore = create((set, get) => ({
 
       if (response.ok) {
         const ordersData = await response.json();
-        const processedOrders = processOrdersData(ordersData);
-
+        // Directly use the orders data without processing
         set({
-          orders: processedOrders,
+          orders: ordersData,
           isLoadingOrders: false,
           error: null,
         });
-        return processedOrders;
+        return ordersData;
       } else {
         const errorData = await response.json();
         throw new Error(
@@ -203,7 +197,7 @@ const useKitchenStore = create((set, get) => ({
     set({ isLoading: true, error: null });
 
     try {
-      const response = await fetch(`${BASE_URL}/table/dirty`, {
+      const response = await fetch(`${BASE_URL}/kitchen/dirty-tables`, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
@@ -212,13 +206,13 @@ const useKitchenStore = create((set, get) => ({
       });
 
       if (response.ok) {
-        const tables = await response.json();
+        const dirtyTablesData = await response.json();
         set({
-          dirtyTables: tables,
+          dirtyTables: dirtyTablesData,
           isLoading: false,
           error: null,
         });
-        return tables;
+        return dirtyTablesData;
       } else {
         const errorData = await response.json();
         throw new Error(
@@ -242,30 +236,33 @@ const useKitchenStore = create((set, get) => ({
     set({ isLoading: true, error: null });
 
     try {
-      const response = await fetch(`${BASE_URL}/table/cleaned/${tableNumber}`, {
+      const response = await fetch(`${BASE_URL}/kitchen/clean-table`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
+        body: JSON.stringify({ tableNumber }),
       });
 
       if (response.ok) {
+        const result = await response.json();
+
+        // Remove the cleaned table from dirty tables list
         const { dirtyTables } = get();
-        const updatedTables = dirtyTables.filter(
-          (table) =>
-            table.table_number !== tableNumber &&
-            table.tableNumber !== tableNumber
+        const updatedDirtyTables = dirtyTables.filter(
+          (table) => (table.table_number || table.tableNumber) !== tableNumber
         );
 
         set({
-          dirtyTables: updatedTables,
+          dirtyTables: updatedDirtyTables,
           isLoading: false,
-          message: `Table ${tableNumber} cleaned successfully`,
+          message: `Table #${tableNumber} cleaned successfully`,
+          error: null,
         });
 
-        setTimeout(() => set({ message: "" }), 2000);
-        return true;
+        setTimeout(() => set({ message: "" }), 3000);
+        return result;
       } else {
         const errorData = await response.json();
         throw new Error(
@@ -293,22 +290,26 @@ const useKitchenStore = create((set, get) => ({
           "Content-Type": "application/json",
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
-        body: JSON.stringify({
-          id: orderId,
-        }),
+        body: JSON.stringify({ orderId, tableNumber }),
       });
 
       if (response.ok) {
+        const result = await response.json();
+
+        // Remove the served order from orders list
         const { orders } = get();
         const updatedOrders = orders.filter((order) => order.id !== orderId);
 
         set({
           orders: updatedOrders,
-          message: `Order for table ${tableNumber} served successfully`,
+          message: `Order for ${
+            tableNumber === 0 ? "Takeout" : `Table #${tableNumber}`
+          } served successfully`,
+          error: null,
         });
 
-        setTimeout(() => set({ message: "" }), 2000);
-        return true;
+        setTimeout(() => set({ message: "" }), 3000);
+        return result;
       } else {
         const errorData = await response.json();
         throw new Error(
@@ -349,64 +350,5 @@ const useKitchenStore = create((set, get) => ({
     });
   },
 }));
-
-// Helper function to process orders data
-function processOrdersData(ordersData) {
-  let dataToProcess = [];
-
-  if (Array.isArray(ordersData)) {
-    dataToProcess = ordersData;
-  } else if (ordersData && typeof ordersData === "object") {
-    if (ordersData.id && ordersData.tableNumber && ordersData.orders) {
-      dataToProcess = [ordersData];
-    } else if (ordersData.orders && Array.isArray(ordersData.orders)) {
-      dataToProcess = ordersData.orders;
-    } else if (ordersData.data && Array.isArray(ordersData.data)) {
-      dataToProcess = ordersData.data;
-    } else {
-      dataToProcess = [ordersData];
-    }
-  } else {
-    return [];
-  }
-
-  const groupedOrders = {};
-
-  dataToProcess.forEach((orderItem, index) => {
-    const tableNumber = orderItem.tableNumber || "Unknown";
-    const orderId = orderItem.id || `order_${tableNumber}_${index}`;
-    const key = orderId;
-
-    if (!groupedOrders[key]) {
-      groupedOrders[key] = {
-        id: orderId,
-        tableNumber: tableNumber,
-        type: orderItem.type || "table",
-        items: [],
-        isServed: false,
-      };
-    }
-
-    if (orderItem.orders && Array.isArray(orderItem.orders)) {
-      orderItem.orders.forEach((order) => {
-        groupedOrders[key].items.push({
-          name: order.name,
-          quantity: order.quantity,
-          price: order.price,
-          product_id: order.product_id,
-        });
-      });
-    } else if (orderItem.name && orderItem.quantity) {
-      groupedOrders[key].items.push({
-        name: orderItem.name,
-        quantity: orderItem.quantity,
-        price: orderItem.price || 0,
-        product_id: orderItem.product_id,
-      });
-    }
-  });
-
-  return Object.values(groupedOrders);
-}
 
 export default useKitchenStore;
