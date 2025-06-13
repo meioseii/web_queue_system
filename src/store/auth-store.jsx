@@ -4,12 +4,15 @@ const useAuthenticationStore = create((set) => ({
   message: "",
   isLoggedIn: localStorage.getItem("token") ? true : false,
   isLoading: false,
+  userType: localStorage.getItem("userType") || null,
+  userId: localStorage.getItem("userId") || null,
+  token: localStorage.getItem("token") || null,
 
   handleLogin: async (data, navigate) => {
     set({ isLoading: true });
 
     try {
-      const response = await fetch("http://54.252.152.233/cashier/login", {
+      const response = await fetch("http://54.252.152.233/staff/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -18,16 +21,30 @@ const useAuthenticationStore = create((set) => ({
       });
 
       if (response.ok) {
-        const { token } = await response.json();
-        localStorage.setItem("token", token);
+        const { userType, userId, token } = await response.json();
 
-        // Navigate to cashier dashboard or appropriate route
-        navigate("/kitchen"); // Update this path as needed
+        // Store all data in localStorage
+        localStorage.setItem("token", token);
+        localStorage.setItem("userType", userType);
+        localStorage.setItem("userId", userId);
 
         set({
           isLoggedIn: true,
+          userType: userType,
+          userId: userId,
+          token: token,
           message: "Login successful",
         });
+
+        // Navigate based on userType
+        if (userType === "Cashier") {
+          navigate("/cashier");
+        } else if (userType === "KitchenStaff") {
+          navigate("/kitchen");
+        } else {
+          // Default fallback for other user types
+          navigate("/dashboard");
+        }
 
         // Clear success message after 1.5 seconds
         setTimeout(() => set({ message: "" }), 1500);
@@ -51,10 +68,15 @@ const useAuthenticationStore = create((set) => ({
 
   handleLogout: (navigate) => {
     localStorage.removeItem("token");
+    localStorage.removeItem("userType");
+    localStorage.removeItem("userId");
     localStorage.removeItem("role");
     navigate("/");
     set({
       isLoggedIn: false,
+      userType: null,
+      userId: null,
+      token: null,
       isCashier: false,
       isAdmin: false,
     });
