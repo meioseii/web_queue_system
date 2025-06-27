@@ -160,28 +160,206 @@
   background: #f8f9fa !important;
 }
 
-/* Responsive */
+/* Enhanced Reservation Card Styles */
+.reservation-card {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border-radius: 12px;
+  padding: 0;
+  box-shadow: 0 2px 8px rgba(255, 149, 0, 0.1);
+  border: 1px solid rgba(255, 149, 0, 0.2);
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.reservation-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(255, 149, 0, 0.15);
+  border-color: rgba(255, 149, 0, 0.3);
+}
+
+.reservation-header {
+  background: linear-gradient(135deg, #FF9500 0%, #e6851d 100%);
+  padding: 16px 20px;
+  color: white;
+}
+
+.customer-avatar {
+  width: 45px;
+  height: 45px;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.customer-avatar i {
+  font-size: 1.2rem !important;
+  color: white !important;
+  display: block !important;
+  visibility: visible !important;
+}
+
+.customer-name {
+  color: white;
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin: 0;
+}
+
+.customer-badge {
+  font-size: 0.75rem;
+  font-weight: 500;
+  border-radius: 12px;
+  padding: 4px 12px;
+  border: none;
+}
+
+.member-badge {
+  background: rgba(255, 255, 255, 0.25) !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+}
+
+.guest-badge {
+  background: rgba(0, 0, 0, 0.2) !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.reservation-time {
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.reservation-details {
+  padding: 20px;
+  background: white;
+}
+
+.detail-row {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.detail-row:last-child {
+  margin-bottom: 0;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+}
+
+.detail-item.full-width {
+  flex: 1 1 100%;
+}
+
+.detail-icon {
+  width: 35px !important;
+  height: 35px !important;
+  background: linear-gradient(135deg, #FF9500 0%, #e6851d 100%) !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-right: 12px !important;
+  flex-shrink: 0 !important;
+}
+
+.detail-icon i {
+  color: white !important;
+  font-size: 0.9rem !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.detail-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.detail-label {
+  font-size: 0.75rem;
+  color: #6c757d;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.detail-value {
+  font-size: 0.9rem;
+  color: #2c3e50;
+  font-weight: 500;
+  word-break: break-word;
+}
+
+/* Responsive adjustments */
 @media (max-width: 768px) {
-  .reservation-section {
-    height: auto;
+  .detail-row {
+    flex-direction: column;
+    gap: 12px;
   }
-
-  .reservation-left,
-  .reservation-right {
-    height: auto;
-    margin-bottom: 20px;
+  
+  .reservation-header {
+    padding: 12px 16px;
   }
-
-  .calendar-container {
-    padding: 20px;
+  
+  .reservation-details {
+    padding: 16px;
   }
-
-  .custom-calendar {
-    max-width: 100%;
+  
+  .customer-avatar {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .customer-name {
+    font-size: 1rem;
+  }
+  
+  .reservation-time {
+    padding: 6px 12px;
+    font-size: 0.8rem;
   }
 }
 
-/* Scrollbar styling */
+/* Animation for loading */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reservation-item {
+  animation: fadeInUp 0.3s ease forwards;
+}
+
+/* Custom scrollbar for reservations list */
+.reservations-list {
+  max-height: 600px;
+  overflow-y: auto;
+}
+
 .reservations-list::-webkit-scrollbar {
   width: 6px;
 }
@@ -192,10 +370,30 @@
 }
 
 .reservations-list::-webkit-scrollbar-thumb {
-  background: #ff9500;
+  background: #FF9500;
   border-radius: 3px;
 }
 
 .reservations-list::-webkit-scrollbar-thumb:hover {
-  background: #e68400;
+  background: #e6851d;
+}
+
+/* Make sure FontAwesome icons are loaded properly */
+.fas, .fa {
+  font-family: "Font Awesome 5 Free" !important;
+  font-weight: 900 !important;
+  -webkit-font-smoothing: antialiased !important;
+  display: inline-block !important;
+  font-style: normal !important;
+  font-variant: normal !important;
+  text-rendering: auto !important;
+  line-height: 1 !important;
+}
+
+/* Force icon visibility */
+.customer-avatar .fas,
+.detail-icon .fas {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: inline-block !important;
 }

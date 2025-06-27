@@ -43,15 +43,15 @@ const Reservation = () => {
   // Helper function to get date string in local timezone
   const getLocalDateString = (date) => {
     const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
 
   useEffect(() => {
     // Get selected date as local date string
     const selectedDateStr = getLocalDateString(selectedDate);
-    
+
     const dayReservations = reservations.filter((res) => {
       const resDate = res.reservation_date;
       if (!resDate) return false;
@@ -59,12 +59,15 @@ const Reservation = () => {
       // Parse the reservation date and get local date string
       const reservationDate = new Date(resDate);
       const reservationDateStr = getLocalDateString(reservationDate);
-      
+
       return reservationDateStr === selectedDateStr;
     });
-    
+
     setSelectedDateReservations(dayReservations);
-    console.log(`Selected date: ${selectedDateStr}, Found reservations:`, dayReservations);
+    console.log(
+      `Selected date: ${selectedDateStr}, Found reservations:`,
+      dayReservations
+    );
   }, [selectedDate, reservations]);
 
   const formatTime = (dateTimeString) => {
@@ -72,10 +75,10 @@ const Reservation = () => {
 
     try {
       const date = new Date(dateTimeString);
-      return date.toLocaleTimeString('en-US', {
-        hour: 'numeric',
-        minute: '2-digit',
-        hour12: true
+      return date.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
       });
     } catch (error) {
       return "N/A";
@@ -84,32 +87,32 @@ const Reservation = () => {
 
   const hasReservations = (date) => {
     const dateStr = getLocalDateString(date);
-    
+
     const hasRes = reservations.some((res) => {
       const resDate = res.reservation_date;
       if (!resDate) return false;
-      
+
       const reservationDate = new Date(resDate);
       const reservationDateStr = getLocalDateString(reservationDate);
-      
+
       return reservationDateStr === dateStr;
     });
-    
+
     return hasRes;
   };
 
   const getStatusBadgeColor = (status) => {
     switch (status?.toUpperCase()) {
-      case 'CREATED':
-        return 'success';
-      case 'CONFIRMED':
-        return 'primary';
-      case 'CANCELLED':
-        return 'danger';
-      case 'COMPLETED':
-        return 'secondary';
+      case "CREATED":
+        return "success";
+      case "CONFIRMED":
+        return "primary";
+      case "CANCELLED":
+        return "danger";
+      case "COMPLETED":
+        return "secondary";
       default:
-        return 'warning';
+        return "warning";
     }
   };
 
@@ -227,69 +230,97 @@ const Reservation = () => {
                     {selectedDateReservations.map((reservation, index) => (
                       <ListGroup.Item
                         key={reservation.reservation_id || index}
-                        className="px-0 py-3 reservation-item"
-                        style={{ borderLeft: `4px solid #FF9500` }}
+                        className="px-0 py-0 reservation-item border-0 mb-3"
                       >
-                        <div className="d-flex justify-content-between align-items-start">
-                          <div className="flex-grow-1">
-                            <div className="d-flex align-items-center mb-2">
-                              <i
-                                className="fas fa-user me-2"
-                                style={{ color: "#FF9500" }}
-                              ></i>
-                              <h6
-                                className="mb-0 fw-bold"
-                                style={{ color: "#FF9500" }}
-                              >
-                                {reservation.customer?.username || "N/A"}
-                              </h6>
-                              <Badge 
-                                bg={reservation.customer?.guest ? "secondary" : "primary"}
-                                className="ms-2"
-                              >
-                                {reservation.customer?.guest ? "Guest" : "Member"}
-                              </Badge>
-                            </div>
-                            <div className="row">
-                              <div className="col-md-6">
-                                <div className="text-muted small mb-1">
-                                  <i className="fas fa-clock me-2"></i>
-                                  <strong>Time:</strong>{" "}
-                                  {formatTime(reservation.reservation_date)}
+                        <div className="reservation-card">
+                          <div className="reservation-header">
+                            <div className="d-flex align-items-center justify-content-between">
+                              <div className="d-flex align-items-center">
+                                <div className="customer-avatar">
+                                  <i className="fas fa-user"></i>
                                 </div>
-                              </div>
-                              <div className="col-md-6">
-                                <div className="text-muted small mb-1">
-                                  <i className="fas fa-users me-2"></i>
-                                  <strong>Party Size:</strong>{" "}
-                                  {reservation.num_people} people
-                                </div>
-                              </div>
-                            </div>
-                            <div className="row">
-                              <div className="col-md-6">
-                                <div className="text-muted small mb-1">
-                                  <i className="fas fa-table me-2"></i>
-                                  <strong>Table:</strong> #{reservation.table_number}
-                                </div>
-                              </div>
-                              <div className="col-md-6">
-                                <div className="text-muted small mb-1">
-                                  <i className="fas fa-info-circle me-2"></i>
-                                  <strong>Status:</strong>{" "}
+                                <div className="ms-3">
+                                  <h6 className="customer-name mb-1">
+                                    {reservation.customer?.username || "N/A"}
+                                  </h6>
                                   <Badge
-                                    bg={getStatusBadgeColor(reservation.status)}
-                                    className="ms-1"
+                                    className={`customer-badge ${
+                                      reservation.customer?.guest
+                                        ? "guest-badge"
+                                        : "member-badge"
+                                    }`}
                                   >
-                                    {reservation.status}
+                                    {reservation.customer?.guest
+                                      ? "Guest"
+                                      : "Member"}
                                   </Badge>
                                 </div>
                               </div>
+                              <div className="reservation-time">
+                                {new Date(
+                                  reservation.reservation_date
+                                ).toLocaleTimeString("en-US", {
+                                  hour: "numeric",
+                                  minute: "2-digit",
+                                  hour12: true,
+                                })}
+                              </div>
                             </div>
-                            <div className="text-muted small mt-2">
-                              <i className="fas fa-calendar me-2"></i>
-                              <strong>Full Date & Time:</strong>{" "}
-                              {new Date(reservation.reservation_date).toLocaleString()}
+                          </div>
+
+                          <div className="reservation-details">
+                            <div className="detail-row">
+                              <div className="detail-item">
+                                <div className="detail-icon">
+                                  <i className="fas fa-phone"></i>
+                                </div>
+                                <div className="detail-content">
+                                  <span className="detail-label">Mobile</span>
+                                  <span className="detail-value">
+                                    {reservation.customer?.mobileNumber ||
+                                      "N/A"}
+                                  </span>
+                                </div>
+                              </div>
+                              <div className="detail-item">
+                                <div className="detail-icon">
+                                  <i className="fas fa-users"></i>
+                                </div>
+                                <div className="detail-content">
+                                  <span className="detail-label">Guests</span>
+                                  <span className="detail-value">
+                                    {reservation.num_people}{" "}
+                                    {reservation.num_people === 1
+                                      ? "person"
+                                      : "people"}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                            <div className="detail-row">
+                              <div className="detail-item full-width">
+                                <div className="detail-icon">
+                                  <i className="fas fa-calendar-alt"></i>
+                                </div>
+                                <div className="detail-content">
+                                  <span className="detail-label">
+                                    Date & Time
+                                  </span>
+                                  <span className="detail-value">
+                                    {new Date(
+                                      reservation.reservation_date
+                                    ).toLocaleString("en-US", {
+                                      weekday: "short",
+                                      year: "numeric",
+                                      month: "short",
+                                      day: "numeric",
+                                      hour: "numeric",
+                                      minute: "2-digit",
+                                      hour12: true,
+                                    })}
+                                  </span>
+                                </div>
+                              </div>
                             </div>
                           </div>
                         </div>
