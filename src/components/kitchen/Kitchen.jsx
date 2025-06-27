@@ -178,6 +178,44 @@ const Kitchen = () => {
     });
   };
 
+  // Add the return action handler
+  const handleReturnAction = async (orderId, action) => {
+    setServingOrderId(orderId);
+    try {
+      const response = await fetch("http://54.252.152.233/kitchen/return", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ id: orderId, action: action }),
+      });
+
+      if (response.ok) {
+        // Remove the order from the list after action
+        const { orders } = useKitchenStore.getState();
+        const updatedOrders = orders.filter((order) => order.id !== orderId);
+        useKitchenStore.setState({ orders: updatedOrders });
+
+        setToastMessage(
+          `Return request ${action}ed successfully! ${
+            action === "accept" ? "✅" : "❌"
+          }`
+        );
+        setToastVariant("success");
+        setShowToast(true);
+      } else {
+        throw new Error(`Failed to ${action} return request`);
+      }
+    } catch (error) {
+      setToastMessage(`Failed to ${action} return request. Please try again.`);
+      setToastVariant("danger");
+      setShowToast(true);
+    } finally {
+      setServingOrderId(null);
+    }
+  };
+
   console.log("Orders from store:", orders);
 
   return (
@@ -251,7 +289,11 @@ const Kitchen = () => {
                       xs={12}
                       className="order-card-wrapper"
                     >
-                      <Card className="order-card">
+                      <Card
+                        className={`order-card ${
+                          order.status === "RETURNING" ? "return-card" : ""
+                        }`}
+                      >
                         <Card.Header
                           className={`order-header text-center ${
                             order.takeOut ? "takeout" : "table"
@@ -301,31 +343,75 @@ const Kitchen = () => {
                                   </div>
                                 ))}
                             </div>
+
+                            {/* Show description for return requests */}
+                            {order.status === "RETURNING" &&
+                              order.description && (
+                                <div className="return-description">
+                                  <div className="description-label">
+                                    <strong>Return Reason:</strong>
+                                  </div>
+                                  <div className="description-text">
+                                    {order.description}
+                                  </div>
+                                </div>
+                              )}
                           </div>
                         </Card.Body>
                         <Card.Footer className="order-footer text-center">
-                          <Button
-                            className="served-btn"
-                            onClick={() =>
-                              handleServed(order.id, order.tableNumber)
-                            }
-                            disabled={
-                              servingOrderId === order.id || isLoadingOrders
-                            }
-                          >
-                            {servingOrderId === order.id ? (
-                              <>
-                                <Spinner
-                                  animation="border"
-                                  size="sm"
-                                  className="me-2"
-                                />
-                                Serving...
-                              </>
-                            ) : (
-                              "Serve Order"
-                            )}
-                          </Button>
+                          {order.status === "RETURNING" ? (
+                            <div className="return-actions">
+                              <Button
+                                className="decline-btn"
+                                onClick={() =>
+                                  handleReturnAction(order.id, "decline")
+                                }
+                                disabled={servingOrderId === order.id}
+                              >
+                                {servingOrderId === order.id ? (
+                                  <Spinner animation="border" size="sm" />
+                                ) : (
+                                  "❌ Decline"
+                                )}
+                              </Button>
+                              <Button
+                                className="accept-btn"
+                                onClick={() =>
+                                  handleReturnAction(order.id, "accept")
+                                }
+                                disabled={servingOrderId === order.id}
+                              >
+                                {servingOrderId === order.id ? (
+                                  <Spinner animation="border" size="sm" />
+                                ) : (
+                                  "✅ Accept"
+                                )}
+                              </Button>
+                            </div>
+                          ) : (
+                            <Button
+                              className="served-btn"
+                              onClick={() =>
+                                handleServed(order.id, order.tableNumber)
+                              }
+                              disabled={
+                                servingOrderId === order.id || isLoadingOrders
+                              }
+                            >
+                              {servingOrderId === order.id ? (
+                                <>
+                                  <Spinner
+                                    animation="border"
+                                    size="sm"
+                                    className="me-2"
+                                  />
+                                  Serving...
+                                </>
+                              ) : (
+                                "Serve Order"
+                              )}
+                            </Button>
+                          )}
                         </Card.Footer>
                       </Card>
                     </Col>
