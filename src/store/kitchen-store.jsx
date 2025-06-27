@@ -187,9 +187,17 @@ const useKitchenStore = create((set, get) => ({
 
       if (response.ok) {
         const ordersData = await response.json();
-        // Directly use the orders data without processing
+
+        // Don't override orderTime if it exists from backend
+        // Remove this part that was adding current timestamp:
+        // const ordersWithTime = ordersData.map((order) => ({
+        //   ...order,
+        //   orderTime:
+        //     order.orderTime || order.createdAt || new Date().toISOString(),
+        // }));
+
         set({
-          orders: ordersData,
+          orders: ordersData, // Use the data directly from backend
           isLoadingOrders: false,
           error: null,
         });
@@ -301,7 +309,7 @@ const useKitchenStore = create((set, get) => ({
   },
 
   // Mark order as served using the serve endpoint
-  markOrderServed: async (orderId, tableNumber) => {
+  markOrderServed: async (orderId) => {
     try {
       const response = await fetch(`${BASE_URL}/kitchen/serve`, {
         method: "POST",
@@ -313,7 +321,25 @@ const useKitchenStore = create((set, get) => ({
       });
 
       if (response.ok) {
-        const result = await response.json();
+        // Check if response has content before parsing JSON
+        let result = null;
+        const contentType = response.headers.get("content-type");
+
+        if (contentType && contentType.includes("application/json")) {
+          const text = await response.text();
+          if (text) {
+            try {
+              result = JSON.parse(text);
+            } catch (parseError) {
+              console.warn("Failed to parse JSON response:", parseError);
+              result = { success: true }; // Fallback result
+            }
+          } else {
+            result = { success: true }; // Empty response but successful
+          }
+        } else {
+          result = { success: true }; // Non-JSON response but successful
+        }
 
         // Remove the served order from orders list
         const { orders } = get();
@@ -321,19 +347,24 @@ const useKitchenStore = create((set, get) => ({
 
         set({
           orders: updatedOrders,
-          message: `Order for ${
-            tableNumber === 0 ? "Takeout" : `Table #${tableNumber}`
-          } served successfully`,
+          message: "Order served successfully",
           error: null,
         });
 
         setTimeout(() => set({ message: "" }), 3000);
         return result;
       } else {
-        const errorData = await response.json();
-        throw new Error(
-          errorData.msg || errorData.error || "Failed to serve order"
-        );
+        // Handle error responses
+        let errorMessage = "Failed to serve order";
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.msg || errorData.error || errorMessage;
+        } catch (parseError) {
+          // If error response is also not valid JSON, use status text
+          errorMessage = response.statusText || errorMessage;
+        }
+
+        throw new Error(errorMessage);
       }
     } catch (error) {
       set({

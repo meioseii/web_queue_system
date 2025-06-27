@@ -101,8 +101,9 @@ const Kitchen = () => {
   }, [fetchOrders, fetchDirtyTables, isConnected]);
 
   const handleServed = async (orderId, tableNumber) => {
+    setServingOrderId(orderId);
     try {
-      await markOrderServed(orderId, tableNumber);
+      await markOrderServed(orderId); // Remove tableNumber parameter
       setToastMessage(
         `Order for ${
           tableNumber === 0 ? "Takeout" : `Table #${tableNumber}`
@@ -164,6 +165,19 @@ const Kitchen = () => {
     ]);
   };
 
+  // Update the formatOrderTime function to include seconds
+  const formatOrderTime = (timestamp) => {
+    if (!timestamp) return "";
+
+    const date = new Date(timestamp);
+    return date.toLocaleString("en-US", {
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true,
+    });
+  };
+
   console.log("Orders from store:", orders);
 
   return (
@@ -217,7 +231,7 @@ const Kitchen = () => {
                     <Spinner animation="border" variant="primary" />
                     <p className="mt-2">Loading orders...</p>
                   </Col>
-                ) : (!orders || orders.length === 0) ? (
+                ) : !orders || orders.length === 0 ? (
                   <Col xs={12} className="text-center py-5">
                     <h4 className="text-muted">No orders at the moment! 🍽️</h4>
                     <p className="text-muted">
@@ -246,12 +260,23 @@ const Kitchen = () => {
                             color: order.takeOut ? "#002BFF" : "inherit",
                           }}
                         >
-                          {order.takeOut ? (
-                            <span className="takeout-text">
-                              Takeout {order.username}
-                            </span>
-                          ) : (
-                            <span>Table [{order.tableNumber}]</span>
+                          <div>
+                            {order.takeOut ? (
+                              <span className="takeout-text">
+                                Takeout {order.username}
+                              </span>
+                            ) : (
+                              <span>Table [{order.tableNumber}]</span>
+                            )}
+                          </div>
+                          {order.orderTime && (
+                            <div className="order-time">
+                              <small
+                                style={{ color: "#000000", fontWeight: "500" }}
+                              >
+                                {formatOrderTime(order.orderTime)}
+                              </small>
+                            </div>
                           )}
                         </Card.Header>
                         <Card.Body className="order-body">

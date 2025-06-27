@@ -48,7 +48,8 @@
   border: none !important;
   color: white;
   font-weight: bold;
-  padding: 10px 15px;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #dee2e6;
   font-size: clamp(12px, 2.5vw, 14px);
   flex-shrink: 0;
 }
@@ -744,4 +745,22 @@
     width: 100% !important;
     margin-bottom: 0.5rem !important;
   }
+}
+
+/* New styles for order time display */
+.order-time {
+  margin-top: 0.25rem;
+}
+
+.order-time small {
+  font-size: 0.75rem;
+  color: #000000 !important;
+  font-weight: 500;
+  opacity: 1;
+}
+
+/* Override any existing color styles */
+.order-header.takeout .order-time small,
+.order-header.table .order-time small {
+  color: #000000 !important;
 }
